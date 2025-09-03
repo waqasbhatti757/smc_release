@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from .service import NameVerificationService
 from .models import UserCreate,TokenUserRequest
 from .service import create_user,insert_user_locations,update_user,get_user_profile_session_info,get_users,get_detail_user_info
+from .service import update_user_passwords
 from .models import FullUserUpdate
 from .service import full_update_user
 router = APIRouter(
@@ -194,12 +195,25 @@ async def add_user(user: UserCreate, db: DbSession):
         )
 
 
+# @router.post("/update_password_activity")
+# async def update_password_activity(db: DbSession):
+#     try:
+#         result = await update_user_passwords(db,)
+#         return result
+#     except Exception as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             detail=f"Failed to create user"
+#         )
+
+
 @router.post("/updateuser")
 async def update_user_endpoint(user: UserCreate, db: DbSession):
     try:
         print(user)
         result = await update_user(db, user)
         print(result)
+        result['success'] = True
         return result
 
     except Exception as e:

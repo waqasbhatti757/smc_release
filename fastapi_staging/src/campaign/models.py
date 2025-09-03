@@ -11,9 +11,11 @@ class SyncCampaignRequest(BaseModel):
 
 
 class SyncCampaignResponse(BaseModel):
-    status: str
-    message: str
-    campaign: int
+    status: bool
+    code: int
+    campaign_id: int
+    message: Optional[str] = None
+    campaign: Optional[dict] = None
 
 
 class UpdateCampaignPayload(BaseModel):
@@ -65,6 +67,7 @@ class CreateAICHeader(BaseModel):
     idcampaign: int
     iduc: int
     supervisor_name: str
+    supervisor_full_name: Optional[str] = None
     enteredby: int
 
 class CreateAICHeaderMobile(BaseModel):
@@ -72,18 +75,21 @@ class CreateAICHeaderMobile(BaseModel):
     ucmo_id: int
     aic_name: str
     user_id: int
+    supervisor_full_name:Optional[str] = None
     def to_standard(self) -> CreateAICHeader:
         return CreateAICHeader(
             idcampaign=self.campaign_id,
             iduc=self.ucmo_id,
             supervisor_name=self.aic_name,
             enteredby=self.user_id,
+            supervisor_full_name=self.supervisor_full_name
         )
 
 class UpdateAICHeader(BaseModel):
     idcampaign: int
     iduc: int
     supervisor_name: str
+    supervisor_full_name: str
     enteredby: int
     supervisor_id: int
 

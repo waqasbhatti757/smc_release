@@ -47,7 +47,7 @@ class UserCreate(BaseModel):
     gender: Optional[str] = None
     accountstatus: Optional[str] = None
     username: str
-    cnic: str
+    cnic: Optional[str] = None
     designation: Optional[str] = None
     districtname: Optional[int] = None
     userrole: Optional[int] = None
@@ -94,7 +94,7 @@ class FullUserUpdate(BaseModel):
     gender: Optional[str] = None
     accountstatus: Optional[str] = None
     username: str
-    cnic: str
+    cnic: Optional[str] = None
     designation: Optional[str] = None
     districtname: Optional[int] = None
     userrole: Optional[int] = None

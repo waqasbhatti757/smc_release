@@ -66,6 +66,20 @@ async def campaign_list(db: DbSession):
     return result
 
 
+@router.get("/campaigns/pmc/list")
+async def campaign_pmc_list(db: DbSession):
+    """
+    API endpoint to get campaigns (idcampaign, name).
+    """
+    service = CampaignService(db)
+    result = await service.get_pmc_campaign_list()
+
+    if result.get("status") == "error":
+        raise HTTPException(status_code=500, detail=result.get("message"))
+
+    return result
+
+
 @router.post("/campaign/locations")
 async def get_locations(payload: CampaignDataRequest, db: DbSession):
     """
@@ -168,14 +182,15 @@ async def geo_ucs_for_aic(payload: AICUCSPayload, db: DbSession):
 @router.post("/campaign/createheader")
 async def create_header_for_campaign(payload: CreateAICHeader, db: DbSession):
     service = CampaignService(db)
-    result = await service.create_formheader(idcampaign=payload.idcampaign,iduc=payload.iduc,supervisor_name=payload.supervisor_name,enteredby=payload.enteredby)
+    print("the payload is ", payload)
+    result = await service.create_formheader(idcampaign=payload.idcampaign,iduc=payload.iduc,supervisor_name=payload.supervisor_name,enteredby=payload.enteredby,supervisor_full_name = payload.supervisor_full_name)
     return result
 
 
 @router.post("/campaign/updateheader")
 async def create_header_for_campaign(payload: UpdateAICHeader, db: DbSession):
     service = CampaignService(db)
-    result = await service.update_formheader(idcampaign=payload.idcampaign,iduc=payload.iduc,supervisor_name=payload.supervisor_name,enteredby=payload.enteredby,idheader = payload.supervisor_id)
+    result = await service.update_formheader(idcampaign=payload.idcampaign,iduc=payload.iduc,supervisor_name=payload.supervisor_name,enteredby=payload.enteredby,idheader = payload.supervisor_id,supervisor_full_name=payload.supervisor_full_name)
     return result
 
 
@@ -315,7 +330,7 @@ async def get_aic_header_data_for_campaign(tid: str, db: DbSession):
 
 
 @router.post("/mobile/add/multi-child-data")
-async def get_aic_header_data_for_campaign(payload: CombinedPayloadMobile, db: DbSession):
+async def add_multi_level_child_data(payload: CombinedPayloadMobile, db: DbSession):
     service = CampaignService(db)
     mapper = ReasonMapper()
     header = payload.header.to_standard()
@@ -328,12 +343,21 @@ async def get_aic_header_data_for_campaign(payload: CombinedPayloadMobile, db: D
         "child": [c.model_dump() for c in child_list],
     }
     print(payload)
-    result = await service.create_formheader(idcampaign= payload["header"]["idcampaign"], iduc= payload["header"]["iduc"], supervisor_name= payload["header"]["supervisor_name"], enteredby= payload["header"]["enteredby"])
+    result = await service.create_formheader(
+        idcampaign=payload["header"]["idcampaign"],
+        iduc=payload["header"]["iduc"],
+        supervisor_name=payload["header"]["supervisor_name"],
+        enteredby=payload["header"]["enteredby"],
+        supervisor_full_name=payload["header"]["supervisor_full_name"],
+        platform = "Mobile"
+    )
     idheader = result['idheader']
+    print(result)
     result = await service.create_formteam(idheader=idheader, team_no=payload["team"]["team_no"],
                                            team_member=payload["team"]["team_member"],
                                            enteredby=payload["header"]["enteredby"], teamtype=1)
 
+    print(result)
     idteam = result['idteam']
     for rr in payload['child']:
         rr['idheader'] = idheader
@@ -404,4 +428,27 @@ async def set_pmc_status(payload:UpdatePMCStatus, db: DbSession):
     result = await service.bulk_update_child_pmc_status(updates=payload['child_data'], idusers=payload['user_id'],idcampaign=payload['campaign_id'])
     return result
 
+
+@router.post("/toggle/user/status")
+async def toggle_user_status_endpoint(idusers: int , db: DbSession):
+    """
+    Endpoint to toggle a user's status between 0 and 1.
+    """
+    service = CampaignService(db)
+
+    result = await service.toggle_user_status(idusers=idusers)
+    return result
+
+@router.post("/delete/team-and-children")
+async def delete_team_and_children_data(idteam: int ,deleted_by: int , db: DbSession):
+    service = CampaignService(db)
+    result = await service.delete_team_and_children(idteam=idteam, deleted_by=deleted_by)
+    return result
+
+
+@router.post("/delete/single/children")
+async def delete_single_children_data(idchildren: int ,deleted_by: int , db: DbSession):
+    service = CampaignService(db)
+    result = await service.delete_single_children(idchildren=idchildren, deleted_by=deleted_by)
+    return result
 

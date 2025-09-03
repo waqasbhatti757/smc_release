@@ -1,3 +1,4 @@
+from sqlalchemy import select, update
 from typing import List, Dict, Any
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import SQLAlchemyError
@@ -163,7 +164,6 @@ async def create_user(db: AsyncSession, user_data):
                                     is_admin,
                                     idoffice,
                                     first_name,
-                                    cnicexpiry,
                                     affiliation,
                                     current_address,
                                     genderval,
@@ -171,7 +171,6 @@ async def create_user(db: AsyncSession, user_data):
                                     status,
                                     createdby,
                                     username,
-                                    cnic,
                                     designation,
                                     district_code,
                                     usertype,
@@ -190,7 +189,6 @@ async def create_user(db: AsyncSession, user_data):
                          :is_admin,
                          :idoffice,
                          :first_name,
-                         :cnicexpiry,
                          :affiliation,
                          :current_address,
                          :genderval,
@@ -198,7 +196,6 @@ async def create_user(db: AsyncSession, user_data):
                          :status,
                          :createdby,
                          :username,
-                         :cnic,
                          :designation,
                          :district_code,
                          :usertype,
@@ -219,7 +216,6 @@ async def create_user(db: AsyncSession, user_data):
         "is_admin": user_data.is_admin,
         "idoffice": user_data.provincename,
         "first_name": user_data.firstname,
-        "cnicexpiry": datetime.strptime(user_data.dob, "%d-%m-%Y").date(),  # ideally convert to date
         "affiliation": user_data.affiliation,
         "current_address": user_data.address,
         "genderval": user_data.gender,
@@ -227,7 +223,6 @@ async def create_user(db: AsyncSession, user_data):
         "status": is_active,
         "createdby": user_data.created_by,
         "username": user_data.username,
-        "cnic": user_data.cnic,
         "designation": user_data.designation,
         "district_code": user_data.districtname,
         "usertype": user_data.userrole,
@@ -291,8 +286,6 @@ async def update_user(db: AsyncSession, user_data):
                      last_name           = :last_name,
                      genderval           = :genderval,
                      email               = :email,
-                     cnic                = :cnic,
-                     cnicexpiry          = :cnicexpiry,
                      mobile              = :mobile,
                      affiliation         = :affiliation,
                      designation         = :designation,
@@ -308,8 +301,6 @@ async def update_user(db: AsyncSession, user_data):
         "last_name": user_data.lastname,
         "genderval": user_data.gender,
         "email": user_data.email,
-        "cnic": user_data.cnic,
-        "cnicexpiry": datetime.strptime(user_data.dob, "%d-%m-%Y").date(),
         "mobile": user_data.contactnumber,
         "affiliation": user_data.affiliation,
         "designation": user_data.designation,
@@ -427,6 +418,10 @@ def build_filter_conditions(payload) -> (str, Dict[str, Any]):
     if payload.userentry is not None:
         conditions.append("u.entrypermission = :userentry")
         params["userentry"] = payload.userentry
+
+    if payload.isadmin is not None:
+        conditions.append("u.is_admin = :isadmin")
+        params["isadmin"] = payload.isadmin
 
     where_clause = " AND ".join(conditions)
     return where_clause, params
@@ -619,7 +614,6 @@ async def full_update_user(db: AsyncSession, user_data):
             username = :username,
             idoffice = :idoffice,
             first_name = :first_name,
-            cnicexpiry = :cnicexpiry,
             affiliation = :affiliation,
             current_address = :current_address,
             genderval = :genderval,
@@ -645,7 +639,6 @@ async def full_update_user(db: AsyncSession, user_data):
         "username": user_data.username,
         "idoffice": user_data.provincename,
         "first_name": user_data.firstname,
-        "cnicexpiry": datetime.strptime(user_data.dob, "%d-%m-%Y").date(),
         "affiliation": user_data.affiliation,
         "current_address": user_data.address,
         "genderval": user_data.gender,
@@ -685,3 +678,42 @@ async def full_update_user(db: AsyncSession, user_data):
     except Exception as e:
         await db.rollback()
         raise
+
+
+from src.encryption_cryptography import hash  # your existing hash module
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
+import asyncio
+
+async def update_user_passwords(db: AsyncSession):
+    # Fetch all users with temp_password
+    query = text("SELECT idusers, temp_password FROM users WHERE temp_password IS NOT NULL")
+    result = await db.execute(query)
+    users = result.fetchall()
+
+    if not users:
+        return "No users found with temp_password."
+
+    for user_id, temp_password in users:
+        # Skip empty passwords
+        if not temp_password:
+            continue
+
+        password_hash = await hash.create_password_hash(temp_password)
+        password_style_de_passe = await hash.style_password(temp_password)
+
+        # Update user row
+        update_query = text("""
+            UPDATE users
+            SET password_hash = :password_hash,
+                password_style_de_passe = :password_style_de_passe
+            WHERE idusers = :user_id
+        """)
+        await db.execute(update_query, {
+            "password_hash": password_hash,
+            "password_style_de_passe": password_style_de_passe,
+            "user_id": user_id
+        })
+
+    await db.commit()
+    return f"Updated {len(users)} users successfully."

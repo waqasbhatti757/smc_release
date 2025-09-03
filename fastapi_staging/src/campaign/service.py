@@ -282,6 +282,36 @@ class CampaignService:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
+    async def get_pmc_campaign_list(self):
+        """
+        Fetch list of campaigns (idcampaign, name) from DB
+        and return as JSON-serializable list.
+        Handles DB errors gracefully.
+        """
+        try:
+            query = text("""SELECT idcampaign, name
+                            FROM campaign
+                            ORDER BY idcampaign DESC
+                            LIMIT 1 offset 1;""")
+            query2 = text("""SELECT name
+                             FROM campaign
+                             ORDER BY idcampaign DESC
+                             LIMIT 1;""")
+
+            result = await self.db.execute(query)
+            result2 = await self.db.execute(query2)
+
+            rows = result.fetchall()
+            rows2 = result2.fetchone()
+            campaigns = [{"idcampaign": r.idcampaign, "name": r.name} for r in rows]
+            name = rows2[0]
+            return {"status": "success", "campaigns": campaigns, "title": name}
+
+        except SQLAlchemyError as e:
+            return {"status": "error", "message": "Failed to fetch campaigns from database"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
     async def get_province_division_district(self, idcampaign,type_field_camp):
         """
         Fetch provinces, divisions, and districts for a given campaign.
@@ -631,7 +661,7 @@ class CampaignService:
             await self.db.rollback()
             return {"status": "error", "msg": str(e)}
 
-    async def get_provinces_info_for_campaign(self, idcampaign: int, idprovince: int  or None = None):
+    async def get_provinces_info_for_campaign(self, idcampaign: int, idprovince: int | None = None):
         """
         Get distinct provinces for a given campaign.
         If idprovince is provided, filter by it. Otherwise, return all provinces for that campaign.
@@ -665,7 +695,7 @@ class CampaignService:
             raise HTTPException(status_code=500, detail=str(e))
 
     async def get_divisions_info_for_campaign(
-        self, idcampaign: int, idprovince: int, iddivision: int  or None = None
+        self, idcampaign: int, idprovince: int, iddivision: int | None = None
     ):
         """
         Get distinct divisions for a given campaign and province.
@@ -706,7 +736,7 @@ class CampaignService:
             raise HTTPException(status_code=500, detail=str(e))
 
     async def get_districts_info_for_campaign(
-            self, idcampaign: int, iddivision: int, dcode: int  or None = None
+            self, idcampaign: int, iddivision: int, dcode: int | None = None
     ):
         """
         Get distinct districts for a given campaign and division.
@@ -744,7 +774,7 @@ class CampaignService:
 
 
     async def get_tehsils_info_for_campaign(
-        self, idcampaign: int, dcode: int, lcode: int  or None = None
+        self, idcampaign: int, dcode: int, lcode: int | None = None
     ):
         """
         Get tehsils for a given campaign and district.
@@ -787,7 +817,7 @@ class CampaignService:
 
 
     async def get_ucs_info_for_campaign(
-        self, idcampaign: int, tehcode: int, uc_codes: list[int]  or None = None
+        self, idcampaign: int, tehcode: int, uc_codes: list[int] | None = None
     ):
         """
         Get UCs for a given campaign and tehsil.
@@ -803,9 +833,21 @@ class CampaignService:
                 ON d.code = ucs.iduc
             WHERE ucs.idcampaign = :idcampaign
               AND ucs.uc_status = 1
-              AND d.status = 1
               AND LEFT(CAST(d.code AS TEXT), 5)::INT = :tehcode
         """
+        # base_query = """
+        #              SELECT d.name || ' (' || d.tname || ')' AS uctname, \
+        #                     d.code, \
+        #                     ucs.uc_type
+        #              FROM campaign_ucs AS ucs
+        #                       JOIN location AS d
+        #                            ON d.code = ucs.iduc
+        #              WHERE ucs.idcampaign = :idcampaign
+        #                AND ucs.uc_status = 1
+        #                AND d.status = 1
+        #                AND LEFT (CAST (d.code AS TEXT) \
+        #                  , 5):: INT = :tehcode \
+        #              """
 
         # If UC codes are passed, filter by them
         if uc_codes and len(uc_codes) > 0:
@@ -830,17 +872,25 @@ class CampaignService:
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-    async def create_formheader(self, idcampaign: int, iduc: int, supervisor_name: str, enteredby: int):
+    async def create_formheader(self,idcampaign: int, iduc: int, supervisor_name: str, enteredby: int,supervisor_full_name:str,platform: str="Web"):
+        check_sql = text("""
+                         SELECT *
+                         FROM formheader
+                         WHERE idcampaign = :idcampaign
+                           AND iduc = :iduc AND supervisor_name = :supervisor_name;
+                         """)
         insert_sql = text("""
                           INSERT INTO formheader (idcampaign,
                                                   iduc,
                                                   supervisor_name,
+                                                  supervisor_full_name,
                                                   enteredby,
                                                   tid,
                                                   day)
                           VALUES (:idcampaign,
                                   :iduc,
                                   :supervisor_name,
+                                  :supervisor_full_name,
                                   :enteredby,
                                   'TEMP',
                                   EXTRACT(DAY FROM CURRENT_DATE)::SMALLINT) RETURNING idheader;
@@ -862,11 +912,32 @@ class CampaignService:
 
         try:
             async with self.db.begin():  # transaction scope
+                # First, check if record already exists
+                check_result = await self.db.execute(check_sql, {
+                    "idcampaign": idcampaign,
+                    "iduc": iduc,
+                    "supervisor_name":supervisor_name
+                })
+                existing = check_result.fetchone()
+                print(existing)
+                if existing:
+                    if platform == "Mobile":
+                        return {
+                            "status": False,
+                            "message": "Form Header already exists for that Campaign and UC. Please consider unique 2 Digit AIC Range (11-99)",
+                            "idheader": existing.idheader  # or existing["idheader"] depending on row type
+                        }
+                    else:
+                        raise HTTPException(
+                            status_code=400,
+                            detail="Form Header already exists for that Campaign and UC. Please consider unique 2 Digit AIC Range (11-99)"
+                        )
                 # Insert row
                 result = await self.db.execute(insert_sql, {
                     "idcampaign": idcampaign,
                     "iduc": iduc,
                     "supervisor_name": supervisor_name,
+                    "supervisor_full_name": supervisor_full_name,
                     "enteredby": enteredby
                 })
 
@@ -895,10 +966,24 @@ class CampaignService:
 
 
 
-    async def update_formheader(self, idcampaign: int, iduc: int, supervisor_name: str, enteredby: int,idheader: int):
+    async def update_formheader(self, idcampaign: int, iduc: int, supervisor_name: str, enteredby: int,idheader: int,supervisor_full_name:str):
+        check_sql = text("""
+                         SELECT *
+                         FROM formheader
+                         WHERE idcampaign = :idcampaign
+                           AND iduc = :iduc
+                           AND supervisor_name = :supervisor_name AND idheader = :idheader;
+                         """)
+        check_sql_name_exists = text("""
+                         SELECT *
+                         FROM formheader
+                         WHERE idcampaign = :idcampaign
+                           AND iduc = :iduc
+                           AND supervisor_name = :supervisor_name
+                         """)
         update_sql = text("""
                           UPDATE formheader 
-                          SET supervisor_name = :supervisor_name
+                          SET supervisor_name = :supervisor_name, supervisor_full_name = :supervisor_full_name, enteredby = :enteredby
                           WHERE iduc = :iduc
                           AND idheader = :idheader
                           AND idcampaign = :idcampaign
@@ -915,12 +1000,42 @@ class CampaignService:
 
         try:
             async with self.db.begin():  # transaction scope
+                check_result = await self.db.execute(check_sql, {
+                    "idcampaign": idcampaign,
+                    "iduc": iduc,
+                    "supervisor_name": supervisor_name,
+                    "idheader": idheader
+                })
+                existing = check_result.fetchone()
+                print(existing)
+                if existing and existing.idheader==idheader:
+                    return {
+                        "status": "success",
+                        "message": "AIC header updated successfully",
+                        "idheader": idheader
+                    }
+
+                else:
+                    check_result2 = await self.db.execute(check_sql_name_exists, {
+                        "idcampaign": idcampaign,
+                        "iduc": iduc,
+                        "supervisor_name": supervisor_name
+                    })
+                    existing2 = check_result2.fetchone()
+
+                    if existing2:
+                        raise HTTPException(
+                            status_code=400,
+                            detail=f"Form Header already exists for that Campaign and UC. Please consider unique 2 Digit AIC Range (11-99)"
+                        )
                 # Insert row
                 result = await self.db.execute(update_sql, {
                     "supervisor_name": supervisor_name,
+                    "supervisor_full_name":supervisor_full_name,
                     "iduc": iduc,
                     "idheader": idheader,
-                    "idcampaign": idcampaign
+                    "idcampaign": idcampaign,
+                    "enteredby":enteredby
                 })
 
                 row = result.fetchone()
@@ -963,38 +1078,72 @@ class CampaignService:
 
         try:
             async with self.db.begin():  # transaction scope
-                result = await self.db.execute(insert_sql, {
+                select_existing_sql = text("""
+                                           SELECT idteam
+                                           FROM formteam
+                                           WHERE idheader = :idheader
+                                             AND team_no = UPPER(TRIM(:team_no))
+                                           """)
+                existing_result = await self.db.execute(select_existing_sql, {
                     "idheader": idheader,
-                    "team_no": team_no,
-                    "team_member": team_member,
-                    "teamtype": teamtype,
-                    "enteredby": enteredby
+                    "team_no": team_no
                 })
-
-                # Correct fetch for async
-                row = result.fetchone()
-                if not row:
+                existing_row = existing_result.fetchone()
+                existing_idteam = existing_row[0] if existing_row else None
+                if existing_idteam:
                     return {
                         "status": "error",
-                        "message": "Failed to create team member",
-                        "idteam": None
+                        "message": f"Team number '{team_no}' already exists for this header.",
+                        "idteam": existing_idteam
+                    }
+                else:
+                    result = await self.db.execute(insert_sql, {
+                        "idheader": idheader,
+                        "team_no": team_no,
+                        "team_member": team_member,
+                        "teamtype": teamtype,
+                        "enteredby": enteredby
+                    })
+
+                    # Correct fetch for async
+                    row = result.fetchone()
+                    if not row:
+                        return {
+                            "status": "error",
+                            "message": "Failed to create team member",
+                            "idteam": None
+                        }
+
+                    idteam = row[0]
+                    await self.db.execute(log_insert_sql, {"idteam": idteam})
+                    return {
+                        "status": "success",
+                        "message": "Team member created successfully",
+                        "idteam": idteam
                     }
 
-                idteam = row[0]
-                await self.db.execute(log_insert_sql, {"idteam": idteam})
-                return {
-                    "status": "success",
-                    "message": "Team member created successfully",
-                    "idteam": idteam
-                }
+        # except IntegrityError:
+        #     # Duplicate team_no for the same header
+        #
+        #     select_existing_sql = text("""
+        #                                SELECT idteam
+        #                                FROM formteam
+        #                                WHERE idheader = :idheader
+        #                                  AND team_no = UPPER(TRIM(:team_no))
+        #                                """)
+        #     existing_result = await self.db.execute(select_existing_sql, {
+        #         "idheader": idheader,
+        #         "team_no": team_no
+        #     })
+        #     existing_row = existing_result.fetchone()
+        #     existing_idteam = existing_row[0] if existing_row else None
+        #
+        #     return {
+        #         "status": "error",
+        #         "message": f"Team number '{team_no}' already exists for this header.",
+        #         "idteam": existing_idteam
+        #     }
 
-        except IntegrityError:
-            # Duplicate team_no for the same header
-            return {
-                "status": "error",
-                "message": f"Team number '{team_no}' already exists for this header.",
-                "idteam": None
-            }
 
         except Exception as e:
             print(f"[ERROR] create_formteam failed: {e}")
@@ -1544,6 +1693,7 @@ class CampaignService:
                                           fh.idcampaign      AS idcampaign,
                                           c.name             AS campaign_name,
                                           fh.supervisor_name AS supervisor_name,
+                                          fh.supervisor_full_name AS supervisor_full_name,
                                           fh.tid             AS aicid,
                                           fh.idheader        AS aicheader
                           FROM formheader fh
@@ -1705,8 +1855,7 @@ class CampaignService:
 
             if not rows:
                 return {
-                    "status_code": 404,
-                    "content": {"success": False, "message": "No campaign data found", "data": []}
+                    "success": False, "message": "No campaign data found", "data": []
                 }
 
             ucs = {}
@@ -2626,6 +2775,161 @@ class CampaignService:
                 "updated_ids": updated_ids
             }
 
+    async def toggle_user_status(self, idusers: int):
+        """
+        Toggle the 'status' field of a user between 0 and 1.
+        Returns the updated status.
+        """
+        toggle_sql = text("""
+                          UPDATE users
+                          SET status = CASE
+                                           WHEN status = 1 THEN 0
+                                           WHEN status = 0 THEN 1
+                              END
+                          WHERE idusers = :idusers RETURNING status;
+                          """)
+
+        try:
+            async with self.db.begin():  # transaction
+                result = await self.db.execute(toggle_sql, {"idusers": idusers})
+                updated_row = result.fetchone()
+
+                if not updated_row:
+                    return {
+                        "status": "False",
+                        "message": f"No user found with idusers={idusers}",
+                        "data": None
+                    }
+
+                return {
+                    "status": "success",
+                    "message": f"User status toggled successfully",
+                    "data": {"idusers": idusers, "status": updated_row.status}
+                }
+
+        except Exception as e:
+            print(f"[ERROR] toggle_user_status failed: {e}")
+            return {
+                "status": "False",
+                "message": f"Unexpected error toggling user status: {str(e)}",
+                "data": None
+            }
+
+
+    async def delete_team_and_children(self, idteam: int, deleted_by: int):
+        """
+        Delete a team and its children after logging them in respective log tables.
+        """
+        try:
+            async with self.db.begin():  # transaction scope
+                # 1️⃣ Check if children exist for this team
+                children_sql = text("""
+                    SELECT idchildren
+                    FROM formchildren
+                    WHERE idteam = :idteam
+                """)
+                result = await self.db.execute(children_sql, {"idteam": idteam})
+                children_rows = result.fetchall()
+
+                # 2️⃣ Log each child into logformchildren
+                for child in children_rows:
+                    log_child_sql = text("""
+                        INSERT INTO deletedformchildren (idchildren, idheader, idteam, day, house, name, gender, age,
+                                                     father, address, nofmc, reasontype, nodose, reject, location, hrmp,
+                                                     returndate, dateofvacc, enteredby, entereddate, updatedby, updateddate,
+                                                     deletedby, deleteddate)
+                        SELECT idchildren, idheader, idteam, day, house, name, gender, age,
+                               father, address, nofmc, reasontype, nodose, reject, location, hrmp,
+                               returndate, dateofvacc, enteredby, entereddate, updatedby, updateddate,
+                               :deleted_by, NOW()
+                        FROM formchildren
+                        WHERE idchildren = :idchildren
+                    """)
+                    await self.db.execute(log_child_sql, {
+                        "idchildren": child.idchildren,
+                        "deleted_by": deleted_by
+                    })
+
+                # 3️⃣ Log the team info into deletedformteamlog
+                log_team_sql = text("""
+                    INSERT INTO deletedformteam (idteam, idheader, team_no, team_member,
+                                                    teamtype, updatedby,updateddate,deletedby, deleteddate)
+                    SELECT idteam, idheader, team_no, team_member, teamtype,  updatedby,updateddate,
+                           :deletedby, NOW()
+                    FROM formteam
+                    WHERE idteam = :idteam
+                """)
+                await self.db.execute(log_team_sql, {
+                    "idteam": idteam,
+                    "deletedby": deleted_by
+                })
+
+                # 4️⃣ Delete children rows
+                delete_children_sql = text("""
+                    DELETE FROM formchildren WHERE idteam = :idteam
+                """)
+                await self.db.execute(delete_children_sql, {"idteam": idteam})
+
+                # 5️⃣ Delete team row
+                delete_team_sql = text("""
+                    DELETE FROM formteam WHERE idteam = :idteam
+                """)
+                await self.db.execute(delete_team_sql, {"idteam": idteam})
+
+                return {
+                    "status": "success",
+                    "message": f"Team {idteam} and associated children deleted successfully."
+                }
+
+        except Exception as e:
+            print(f"[ERROR] delete_team_and_children failed: {e}")
+            return {
+                "status": "error",
+                "message": f"Failed to delete team {idteam}: {str(e)}"
+            }
+
+
+    async def delete_single_children(self, idchildren: int, deleted_by: int):
+        """
+        Delete a team and its children after logging them in respective log tables.
+        """
+        try:
+            async with self.db.begin():  # transaction scope
+                log_child_sql = text("""
+                    INSERT INTO deletedformchildren (idchildren, idheader, idteam, day, house, name, gender, age,
+                                                 father, address, nofmc, reasontype, nodose, reject, location, hrmp,
+                                                 returndate, dateofvacc, enteredby, entereddate, updatedby, updateddate,
+                                                 deletedby, deleteddate)
+                    SELECT idchildren, idheader, idteam, day, house, name, gender, age,
+                           father, address, nofmc, reasontype, nodose, reject, location, hrmp,
+                           returndate, dateofvacc, enteredby, entereddate, updatedby, updateddate,
+                           :deleted_by, NOW()
+                    FROM formchildren
+                    WHERE idchildren = :idchildren
+                """)
+                await self.db.execute(log_child_sql, {
+                    "idchildren": idchildren,
+                    "deleted_by": deleted_by
+                })
+
+                delete_children_sql = text("""
+                    DELETE FROM formchildren WHERE idchildren = :idchildren
+                """)
+                await self.db.execute(delete_children_sql, {"idchildren": idchildren})
+
+
+                return {
+                    "status": "success",
+                    "message": f"Children deleted successfully."
+                }
+
+        except Exception as e:
+            print(f"[ERROR] delete_single_children failed")
+            return {
+                "status": "error",
+                "message": f"Failed to delete children"
+            }
+
 
 class ReasonMapper:
     def __init__(self):
@@ -2637,6 +2941,7 @@ class ReasonMapper:
                     "In School": 8,
                     "Inside District": 9,
                     "Outside District": 10,
+                    "Outside UC": 17,
                     "Sleeping": 11,
                     "Inside UC":15
                 }
@@ -2752,4 +3057,3 @@ class ReasonMapper:
 
 # print(mapper.to_strings(1, 12))
 # ➝ ("Refusal", "Misconception")
-

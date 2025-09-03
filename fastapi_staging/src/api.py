@@ -7,6 +7,6 @@ from src.campaign.controller import router as campaign_router
 
 def register_routes(app: FastAPI):
 
-   app.include_router(auth_router)
-   app.include_router(users_router)
-   app.include_router(campaign_router)
+    app.include_router(auth_router)
+    app.include_router(users_router)
+    app.include_router(campaign_router)
