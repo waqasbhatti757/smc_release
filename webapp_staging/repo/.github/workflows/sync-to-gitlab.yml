@@ -1,0 +1,30 @@
+name: Sync to GitLab
+
+on:
+  push:
+    branches:
+      - fastapibuild
+
+jobs:
+  push_to_gitlab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to GitLab (Force Sync)
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Sync Bot"
+          git config --global user.email "noreply@github.com"
+
+          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/smc_webapp_team/smc_web_app.git
+
+          # Force push selected branches
+          git push --force gitlab fastapibuild
+
+          # Force push tags
+          git push --force --tags gitlab

@@ -1,0 +1,184 @@
+{% extends "base_header_main.html" %}
+{% load static %}
+
+{% block title %}SMC - Create User Module{% endblock %}
+
+{% block content %}
+
+<div class="relative flex flex-1 flex-col overflow-y-auto">
+    <!-- ===== Main Content Start ===== -->
+    <main>
+        <div class="mx-auto max-w-8xl p-4 md:p-12">
+            <div class="col-span-12 mx-auto">
+                <div class="space-y-6">
+                    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+                        <div class="px-5 py-4 sm:px-6 sm:py-5">
+                            <h1 class="text-[25px] font-bold text-center text-gray-800 dark:text-white/90">
+                                Create New User
+                            </h1>
+                            <div class="space-y-6 border-t border-gray-100">
+                            </div>
+                            <h1 class="text-[12px] pt-8 font-medium text-gray-800 dark:text-white/90">
+                                Please fill all the (<span class="text-red-600">*</span>) required and all field. Click
+                                on
+                                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+                                to show the hints. Fill the accurate information.
+                            </h1>
+                            <div class="flex justify-center pt-3">
+                                <div x-show="showError" x-transition
+                                     class="pt-5 pl-2 pr-3 py-1 text-[12px] text-green-800 bg-red-100 rounded-md font-medium">
+                                    Please enter the Correct Information
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-12 border-t border-gray-100 p-5 sm:p-12 dark:border-gray-800">
+                            <form id="usercreationform" method="POST" action="">
+
+                                {% csrf_token %}
+                                {% include "partial_template/user_form.html" %}
+                                <div class="flex justify-center relative w-full pt-4 col-span-12 md:col-span-12 flex items-center justify-center">
+                                    <button
+                                            type="submit"
+                                            class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 px-6 py-3 text-white font-semibold shadow-md transition-all duration-300 ease-in-out hover:from-green-500 hover:via-green-600 hover:to-emerald-700 hover:shadow-lg active:scale-95 dark:from-green-700 dark:via-green-800 dark:to-green-900"
+                                    >
+                                        Create User
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function dropdown() {
+        return {
+            openDropdown: false,
+            options: [],
+            selected: [],
+            dropdownDirection: 'down',
+
+            toggle() {
+                this.openDropdown = !this.openDropdown;
+                if (this.openDropdown) this.updateDropdownDirection();
+            },
+            open() {
+                this.openDropdown = true;
+                this.updateDropdownDirection();
+            },
+            close() {
+                this.openDropdown = false;
+            },
+            isOpen() {
+                return this.openDropdown;
+            },
+            selectedValues() {
+                return this.selected.map(i => this.options[i].value).join(',');
+            },
+            select(index, event) {
+                if (!this.options[index].selected) {
+                    this.options[index].selected = true;
+                    this.selected.push(index);
+                } else {
+                    this.remove(this.selected.indexOf(index), index);
+                }
+            },
+            remove(index, optionIndex) {
+                this.options[optionIndex].selected = false;
+                this.selected.splice(index, 1);
+            },
+            loadOptions() {
+                const select = document.getElementById('ucselection');
+                this.options = [...select.options]
+                    .filter(option => option.value !== "") // skip placeholder
+                    .map(option => ({
+                        value: option.value,
+                        text: option.text,
+                        selected: false,
+                    }));
+            },
+            updateDropdownDirection() {
+                this.$nextTick(() => {
+                    const trigger = this.$el.getBoundingClientRect();
+                    const dropdown = this.$refs.dropdownList.getBoundingClientRect();
+                    const spaceBelow = window.innerHeight - trigger.bottom;
+                    const spaceAbove = trigger.top;
+
+                    this.dropdownDirection = spaceBelow < dropdown.height && spaceAbove > dropdown.height
+                        ? 'up'
+                        : 'down';
+                });
+            },
+        };
+    }
+
+</script>
+{% include "partial_js_func/user_form_creation.js" %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById("usercreationform").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        try {
+            const response = await fetch(form.action || window.location.href, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'User created successfully!',
+                    timer: 2500,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+
+                form.reset(); // Clear form on success
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || data.detail || 'Something went wrong.',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    willClose: () => {
+                        // Optional: You can add something here if you want after it closes
+                    }
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error',
+                text: 'Network error. Try again.',
+                timer: 3000,
+                timerProgressBar: true
+            });
+            console.error(error);
+        }
+    });
+</script>
+
+
+{% endblock %}

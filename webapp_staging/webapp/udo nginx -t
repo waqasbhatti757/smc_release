@@ -1,0 +1,51 @@
+[0;1;32m●[0m nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+   Active: [0;1;32mactive (running)[0m since Mon 2025-09-01 10:50:34 PKT; 1h 16min ago
+ Main PID: 1642186 (nginx)
+    Tasks: 33 (limit: 408447)
+   Memory: 60.8M
+   CGroup: /system.slice/nginx.service
+           ├─1642186 nginx: master process /usr/sbin/nginx
+           ├─1642596 nginx: worker process
+           ├─1642597 nginx: worker process
+           ├─1642598 nginx: worker process
+           ├─1642599 nginx: worker process
+           ├─1642600 nginx: worker process
+           ├─1642602 nginx: worker process
+           ├─1642603 nginx: worker process
+           ├─1642604 nginx: worker process
+           ├─1642605 nginx: worker process
+           ├─1642606 nginx: worker process
+           ├─1642607 nginx: worker process
+           ├─1642608 nginx: worker process
+           ├─1642609 nginx: worker process
+           ├─1642610 nginx: worker process
+           ├─1642611 nginx: worker process
+           ├─1642612 nginx: worker process
+           ├─1642613 nginx: worker process
+           ├─1642614 nginx: worker process
+           ├─1642615 nginx: worker process
+           ├─1642616 nginx: worker process
+           ├─1642617 nginx: worker process
+           ├─1642618 nginx: worker process
+           ├─1642619 nginx: worker process
+           ├─1642620 nginx: worker process
+           ├─1642621 nginx: worker process
+           ├─1642622 nginx: worker process
+           ├─1642623 nginx: worker process
+           ├─1642624 nginx: worker process
+           ├─1642625 nginx: worker process
+           ├─1642626 nginx: worker process
+           ├─1642627 nginx: worker process
+           └─1642628 nginx: worker process
+
+Sep 01 10:50:34 smcv2.eoc.gov.pk systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Sep 01 10:50:34 smcv2.eoc.gov.pk nginx[1642182]: nginx: [warn] conflicting server name "smcv2.eoc.gov.pk" on 0.0.0.0:80, ignored
+Sep 01 10:50:34 smcv2.eoc.gov.pk nginx[1642182]: nginx: [warn] conflicting server name "smcv2.eoc.gov.pk" on 0.0.0.0:443, ignored
+Sep 01 10:50:34 smcv2.eoc.gov.pk nginx[1642182]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Sep 01 10:50:34 smcv2.eoc.gov.pk nginx[1642182]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Sep 01 10:50:34 smcv2.eoc.gov.pk nginx[1642185]: nginx: [warn] conflicting server name "smcv2.eoc.gov.pk" on 0.0.0.0:80, ignored
+Sep 01 10:50:34 smcv2.eoc.gov.pk nginx[1642185]: nginx: [warn] conflicting server name "smcv2.eoc.gov.pk" on 0.0.0.0:443, ignored
+Sep 01 10:50:34 smcv2.eoc.gov.pk systemd[1]: Started The nginx HTTP and reverse proxy server.
+Sep 01 10:54:45 smcv2.eoc.gov.pk systemd[1]: Reloading The nginx HTTP and reverse proxy server.
+Sep 01 10:54:45 smcv2.eoc.gov.pk systemd[1]: Reloaded The nginx HTTP and reverse proxy server.

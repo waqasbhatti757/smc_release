@@ -1,0 +1,186 @@
+{% extends "base_header_main.html" %}
+{% load static %}
+
+{% block title %}Welcome To SMC Tracker{% endblock %}
+
+{% block content %}
+<div class="text-center mb-10">
+    <div>
+        <h1 class="flex flex-row flex-nowrap items-center my-6">
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+            <span class="flex-none block mx-2 px-2 py-2 text-4xl font-medium uppercase bg-black text-white">
+        SMC FORM REVIEW LIST
+    </span>
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+        </h1>
+    </div>
+</div>
+<div>
+    <form id="editsmcform" method="POST" action="#"
+          class="space-y-4">
+        {% csrf_token %}
+        <div class="grid grid-cols-12 gap-4">
+
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Campaign <span class="text-red-600">*</span>
+                    </label>
+                    <select id="campaign" name="campaign"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Campaign</option>
+                        <option value="immunization">Immunization Drive</option>
+                        <option value="child_health">Child Health Program</option>
+                        <option value="maternal_health">Maternal Health Program</option>
+                        <option value="nutrition">Nutrition Awareness</option>
+                        <option value="education">Education Campaign</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-1">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Province <span class="text-red-600">*</span>
+                    </label>
+                    <select id="province" name="province"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Province</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Sindh">Gilgit Baltistan</option>
+                        <option value="KPK">KPK</option>
+                        <option value="Balochistan">Balochistan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Division <span class="text-red-600">*</span>
+                    </label>
+                    <select id="division" name="division"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Division</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        District <span class="text-red-600">*</span>
+                    </label>
+                    <select id="district" name="district"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>District</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Tehsil <span class="text-red-600">*</span>
+                    </label>
+                    <select id="tehsil" name="tehsil"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Tehsil</option>
+                        <option value="">USTA MUHAMMAD</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        UC's <span class="text-red-600">*</span>
+                    </label>
+                    <select id="uc" name="uc"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>UC</option>
+                    </select>
+                </div>
+            </div>
+            <div class="justify-center col-span-12 md:col-span-1 pt-9">
+                <button type="submit"
+                        class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-2
+                   text-white font-bold shadow-lg ring-1 ring-green-500/30
+                   transition-all duration-300
+                   hover:bg-green-700 hover:shadow-xl
+                   active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-folder-search2-icon lucide-folder-search-2">
+                        <circle cx="11.5" cy="12.5" r="2.5"/>
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+                        <path d="M13.3 14.3 15 16"/>
+                    </svg>
+                    Search
+                </button>
+            </div>
+
+
+        </div>
+    </form>
+</div>
+<hr style="border: none; border-top: 2px dotted #8c8b8b; background-color: transparent; height: 1px; margin: 1.5rem 0;">
+<div>
+    <h1 class="flex flex-row flex-nowrap items-center my-6">
+        <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+        <span class="flex-none block mx-2 px-2 py-2 text-1xl font-medium uppercase bg-black text-white">
+        ALL FORM LIST
+    </span>
+        <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+    </h1>
+</div>
+<div id="hideformlist" class="p-6 bg-gray-50">
+    <div class="overflow-x-auto rounded-lg shadow border border-gray-300">
+        <table class="min-w-full divide-y divide-gray-200 text-gray-700">
+            <thead class="bg-gray-100 text-gray-900 uppercase text-base font-semibold tracking-wide">
+            <tr>
+                <th class="px-3 py-2 text-left">Campaign Name</th>
+                <th class="px-3 py-2 text-left">Province</th>
+                <th class="px-3 py-2 text-left">Division</th>
+                <th class="px-3 py-2 text-left">District</th>
+                <th class="px-3 py-2 text-left">Tehsil</th>
+                <th class="px-3 py-2 text-left">UC's</th>
+                <th class="px-3 py-2 text-left">TID</th>
+                <th class="px-3 py-2 text-left">Area Incharge</th>
+                <th class="px-3 py-2 text-left">Total Team</th>
+                <th class="px-3 py-2 text-left">Total Children</th>
+                <th class="px-3 py-2 text-left">Reported By</th>
+                <th class="px-3 py-2 text-center">Action</th>
+            </tr>
+            </thead>
+            <tbody id="childrenTableBody" class="divide-y divide-gray-200 bg-white text-sm md:text-base">
+            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-3 py-2">Campaign 1</td>
+                <td class="px-3 py-2">Punjab</td>
+                <td class="px-3 py-2">Lahore</td>
+                <td class="px-3 py-2">Lahore City</td>
+                <td class="px-3 py-2">Tehsil 1</td>
+                <td class="px-3 py-2">UCs-01</td>
+                <td class="px-3 py-2">T-01</td>
+                <td class="px-3 py-2">Ali Khan</td>
+                <td class="px-3 py-2">5</td>
+                <td class="px-3 py-2">100</td>
+                <td class="px-3 py-2">Admin</td>
+                <td class="px-3 py-2 text-center">
+                    <button class="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md shadow-sm transition-all duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-trash-icon lucide-trash mr-1">
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                            <path d="M3 6h18"/>
+                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% include "partial_js_func/smc_sheet_js.js" %}
+{% endblock %}

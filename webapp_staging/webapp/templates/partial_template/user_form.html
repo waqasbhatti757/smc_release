@@ -1,0 +1,838 @@
+<div class="grid grid-cols-12 gap-4">
+    <!-- Input 1 -->
+    <div x-data="{ showHint: false }" class="col-span-12 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Username <span class="text-red-600">*</span>
+            </label>
+
+            <input id="username" name="username"
+                   type="text" required
+                   class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                   placeholder="Enter username..." autocomplete="off"
+                   autocapitalize="off"
+                   spellcheck="true"/>
+            <!-- Exclamation Badge -->
+            <div
+                    @click="showHint = !showHint"
+                    :class="{ 'hidden': showHint }" x-cloak
+                    class="absolute inset-y-2 mt-4 pt-2 right-5 flex items-center justify-center cursor-pointer"
+            >
+                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+            </div>
+            <!-- Tooltip Hint -->
+            <div x-show="showHint" @click.outside="showHint = false" x-transition x-cloak
+                 class="relative right-0 top-full mt-2 w-[calc(200%-1rem)] max-w-full text-[12px] text-white rounded-md p-2 bg-gray-800 shadow-lg z-10">
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+                Username must be 5–20 characters, all lowercase, start with a letter, contain at least one letter, and may include only underscores _ or periods . (not at the end or repeated). No spaces, uppercase letters, only numbers, or special characters other than _ or .. Username must not be exists in our system
+            </div>
+        </div>
+    </div>
+    <div x-data="{ showHint: false }" class="col-span-10 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                First Name <span class="text-red-600">*</span>
+            </label>
+
+            <input id="firstname" name="firstname"
+                   type="text" required
+                   class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                   placeholder="Enter Last Name..." autocomplete="off"
+                   autocapitalize="off"
+                   spellcheck="true"/>
+            <!-- Exclamation Badge -->
+            <div
+                    @click="showHint = !showHint"
+                    :class="{ 'hidden': showHint }" x-cloak
+                    class="absolute inset-y-2 mt-4 pt-2 right-5 flex items-center justify-center cursor-pointer"
+            >
+                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+            </div>
+            <!-- Tooltip Hint -->
+            <div x-show="showHint" @click.outside="showHint = false" x-transition x-cloak
+                 class="relative right-0 top-full mt-2 w-[calc(200%-1rem)] max-w-full text-[12px] text-white rounded-md p-2 bg-gray-800 shadow-lg z-10">
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[12px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+                Name must start with a letter, be at least 3 characters long, and use only English letters. Avoid numbers, special characters, repeated letters (e.g., aaa), email formats, or blacklisted words like "admin", "test", etc.
+            </div>
+        </div>
+    </div>
+    <div x-data="{ showHint: false }" class="col-span-10 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Last Name <span class="text-red-600">*</span>
+            </label>
+
+            <input id="lastname" name="lastname"
+                   type="text" required
+                   class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                   placeholder="Enter Last Name..." autocomplete="off"
+                   autocapitalize="off"
+                   spellcheck="true"/>
+            <!-- Exclamation Badge -->
+            <div
+                    @click="showHint = !showHint"
+                    :class="{ 'hidden': showHint }"
+                    class="absolute inset-y-2 mt-4 pt-2 right-5 flex items-center justify-center cursor-pointer"
+            >
+                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+            </div>
+            <!-- Tooltip Hint -->
+            <div x-show="showHint" @click.outside="showHint = false" x-transition x-cloak
+                 class="relative right-0 top-full mt-2 w-[calc(200%-1rem)] max-w-full text-[12px] text-white rounded-md p-2 bg-gray-800 shadow-lg z-10">
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[12px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+                Name must start with a letter, be at least 3 characters long, and use only English letters. Avoid numbers, special characters, repeated letters (e.g., aaa), email formats, or blacklisted words like "admin", "test", etc.
+            </div>
+        </div>
+    </div>
+    <div x-data="{ showHint: false }" class="col-span-10 md:col-span-3">
+        <div class="relative">
+            <div>
+                <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                    Gender <span class="text-red-600">*</span>
+                </label>
+                <div
+                        x-data="{ isOptionSelected: false }"
+                        class="relative z-20 bg-transparent"
+                >
+                    <select required
+                            id="gender" name="gender"
+                            class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                            :class="isOptionSelected && 'text-gray-800 dark:text-white/90'"
+                            @change="isOptionSelected = true"
+                    >
+                        <option value="" selected disabled
+                                class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                            Select
+                        </option>
+                        <option value="Male"
+                                class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                            Male
+                        </option>
+                        <option value="Female"
+                                class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                            Female
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div x-data="{ showHint: false }" class="col-span-12 md:col-span-3">
+        <div x-data="{ showHint: false }" class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Email <span class="text-red-600">*</span>
+            </label>
+
+            <div class="relative w-full max-w-3xl">
+                <!-- Icon inside input -->
+                <span
+                        class="absolute top-1/2 left-0 -translate-y-1/2 border-r border-gray-200 px-3.5 py-3 text-gray-500 dark:border-gray-800 dark:text-gray-400"
+                >
+                                            <!-- Email Icon -->
+                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="M3.04175 7.06206V14.375C3.04175 14.6511 3.26561 14.875 3.54175 14.875H16.4584C16.7346 14.875 16.9584 14.6511 16.9584 14.375V7.06245L11.1443 11.1168C10.457 11.5961 9.54373 11.5961 8.85638 11.1168L3.04175 7.06206ZM16.9584 5.19262V5.20026C16.9572 5.22216 16.946 5.24239 16.9279 5.25501L10.2864 9.88638C10.1145 10.0062 9.8862 10.0062 9.71437 9.88638L3.07255 5.25485C3.05342 5.24151 3.04202 5.21967 3.04202 5.19636C3.042 5.15695 3.07394 5.125 3.11335 5.125H16.8871C16.9253 5.125 16.9564 5.15494 16.9584 5.19262ZM18.4584 5.21428V14.375C18.4584 15.4796 17.563 16.375 16.4584 16.375H3.54175C2.43718 16.375 1.54175 15.4796 1.54175 14.375V5.19498C1.54175 5.1852 1.54194 5.17546 1.54231 5.16577C1.55858 4.31209 2.25571 3.625 3.11335 3.625H16.8871C17.7549 3.625 18.4584 4.32843 18.4585 5.19622C18.4585 5.20225 18.4585 5.20826 18.4584 5.21428Z"
+                                                    fill="#667085"/>
+                                            </svg>
+                                        </span>
+
+                <!-- Input -->
+                <input required
+                       id="email" name="email" type="email"
+                       placeholder="info@gmail.com"
+                       autocapitalize="off"
+                       class="h-16 w-full rounded-xl border border-gray-300 bg-white pl-20 pr-10 text-[12px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                />
+
+                <!-- Exclamation Icon (toggle button) -->
+                <div
+                        @click="showHint = true"
+                        x-show="!showHint"
+                        class="absolute inset-y-0 right-3 flex items-center justify-center cursor-pointer" x-transition
+                        x-cloak
+                >
+                    <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+                </div>
+            </div>
+
+            <!-- Tooltip Hint inline with icon -->
+            <div x-show="showHint" x-cloak x-transition @click.outside="showHint = false"
+                 class="mt-2 flex items-start gap-2 text-[12px] text-white bg-gray-800 rounded-md p-2 shadow-lg z-10 max-w-full">
+                <!-- Static Icon in Hint -->
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+
+                <!-- Hint text -->
+                <div class="max-w-[90%]">
+                    Enter a valid email like name@example.com. It should start with a letter, contain only letters, numbers, dots (.), or underscores (_), and avoid things like 'aaa' or '..'. The domain must be real and not temporary. Also, this email must not already exist.
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div x-data="{ showHint: false, showPassword: false }"
+         class="col-span-12 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Password <span class="text-red-600">*</span>
+            </label>
+
+            <div class="relative w-full max-w-3xl">
+                <!-- Left Icon -->
+                <span
+                        class="absolute top-1/2 left-0 -translate-y-1/2 border-r border-gray-200 px-3.5 py-3 text-gray-500 dark:border-gray-800 dark:text-gray-400"
+                >
+                                        <!-- Icon -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round"
+                                             class="lucide lucide-key-round-icon lucide-key-round"><path
+                                                d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle
+                                                cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                                      </span>
+
+                <!-- Password Input -->
+                <input
+                        required
+                        :type="showPassword ? 'text' : 'password'"
+                        id="password" name="password" placeholder="********"
+                        autocapitalize="off"
+                        class="h-16 w-full rounded-xl border border-gray-300 bg-white pl-20 pr-20 text-[12px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                />
+
+                <!-- Right Icons (Eye and Hint Toggle) -->
+                <div class="absolute inset-y-0 right-3 flex items-center space-x-2">
+                    <!-- Eye Icon -->
+                    <div @click="showPassword = !showPassword"
+                         class="cursor-pointer text-gray-500 dark:text-white" x-transition x-cloak>
+                        <template x-if="showPassword">
+                            <!-- Eye open -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </template>
+                        <template x-if="!showPassword">
+                            <!-- Eye closed -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.973 9.973 0 012.186-3.292m1.837-1.61A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.96 9.96 0 01-1.272 2.55M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M3 3l18 18"/>
+                            </svg>
+                        </template>
+                    </div>
+
+                    <!-- Hint Toggle -->
+                    <div
+                            @click="showHint = true"
+                            x-show="!showHint"
+                            class="cursor-pointer" x-cloak x-transition
+                    >
+                                          <span
+                                                  class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full"
+                                          >!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hint Box -->
+            <div
+                    x-show="showHint"
+                    x-transition x-cloak
+                    @click.outside="showHint = false"
+                    class="mt-2 flex items-start gap-2 text-[12px] text-white bg-gray-800 rounded-md p-2 shadow-lg z-10 max-w-full"
+            >
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[12px] font-bold text-white bg-red-500 rounded-full">
+                    !
+                </div>
+                <div class="max-w-[90%]">
+                    Use 8–32 characters with at least 1 uppercase, 2 lowercase letters, 1 digit, and 1 special character (!@#...). Avoid spaces, repeated characters (like aaa), and only use standard English symbols. Both passwords must match.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div x-data="{ showHint: false, showPassword: false }"
+         class="col-span-12 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                ReEnter Password <span class="text-red-600">*</span>
+            </label>
+
+            <div class="relative w-full max-w-3xl">
+                <!-- Left Icon -->
+                <span
+                        class="absolute top-1/2 left-0 -translate-y-1/2 border-r border-gray-200 px-3.5 py-3 text-gray-500 dark:border-gray-800 dark:text-gray-400"
+                >
+                                        <!-- Icon -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round"
+                                             class="lucide lucide-key-round-icon lucide-key-round"><path
+                                                d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle
+                                                cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                                      </span>
+
+                <!-- Password Input -->
+                <input
+                        required
+                        :type="showPassword ? 'text' : 'password'"
+                        id="repeatpassword" name="repeatpassword" placeholder="********"
+                        autocapitalize="off"
+                        class="h-16 w-full rounded-xl border border-gray-300 bg-white pl-20 pr-20 text-[12px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                />
+
+                <!-- Right Icons (Eye and Hint Toggle) -->
+                <div class="absolute inset-y-0 right-3 flex items-center space-x-2">
+                    <!-- Eye Icon -->
+                    <div @click="showPassword = !showPassword"
+                         class="cursor-pointer text-gray-500 dark:text-white">
+                        <template x-if="showPassword">
+                            <!-- Eye open -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </template>
+                        <template x-if="!showPassword">
+                            <!-- Eye closed -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.973 9.973 0 012.186-3.292m1.837-1.61A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.96 9.96 0 01-1.272 2.55M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M3 3l18 18"/>
+                            </svg>
+                        </template>
+                    </div>
+
+                    <!-- Hint Toggle -->
+                    <div
+                            @click="showHint = true"
+                            x-show="!showHint"
+                            class="cursor-pointer" x-cloak x-transition
+                    >
+                                          <span
+                                                  class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full"
+                                          >!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hint Box -->
+            <div
+                    x-show="showHint"
+                    x-transition x-cloak
+                    @click.outside="showHint = false"
+                    class="mt-2 flex items-start gap-2 text-[12px] text-white bg-gray-800 rounded-md p-2 shadow-lg z-10 max-w-full"
+            >
+                <div class="inline-flex items-center justify-center w-6 h-6 text-[12px] font-bold text-white bg-red-500 rounded-full">
+                    !
+                </div>
+                <div class="max-w-[90%]">
+                    Use 8–32 characters with at least 1 uppercase, 2 lowercase letters, 1 digit, and 1 special character (!@#...). Avoid spaces, repeated characters (like aaa), and only use standard English symbols. Both passwords must match.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div x-data="{ showHint: false }" class="col-span-12 md:col-span-2">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                CNIC #. <span class="text-red-600">*</span>
+            </label>
+
+            <input
+                    type="text" required
+                    id="cnic" name="cnic"
+                    class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[12px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                    placeholder="e.g. 42101-1234567-1" autocomplete="off" maxlength="15"
+                    autocapitalize="off"
+                    spellcheck="true"/>
+            <!-- Exclamation Badge -->
+            <div
+                    @click="showHint = !showHint"
+                    :class="{ 'hidden': showHint }"
+                    class="absolute inset-y-2 mt-4 pt-2 right-5 flex items-center justify-center cursor-pointer"
+            >
+                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+            </div>
+            <!-- Tooltip Hint -->
+            <div x-show="showHint" @click.outside="showHint = false" x-transition x-cloak
+                 class="relative right-0 top-full mt-2 w-[calc(200%-1rem)] max-w-full text-[12px] text-white rounded-md p-2 bg-gray-800 shadow-lg z-10">
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+                Enter your 13-digit CNIC in the format 61101-7754551-9. It must not start with 0 or contain all zeros in the middle section.
+            </div>
+        </div>
+    </div>
+    <div class="col-span-12 md:col-span-1" x-data="{ showHint: false }">
+
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            CNIC Expiry <span class="text-red-600">*</span>
+        </label>
+
+        <input
+                type="text"
+                id="dob"
+                name="dob"
+                placeholder="DD-MM-YYYY"
+                class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 text-[10px] text-gray-800 placeholder-gray-400 shadow-md focus:border-blue-500 focus:ring-2 focus:ring-blue-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:ring-green-800"
+                autocomplete="off" required
+        />
+
+    </div>
+    <div x-data="{ showHint: false }" class="col-span-10 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Contact Number <span class="text-red-600">*</span>
+            </label>
+
+            <input
+                    id="contactnumber" name="contactnumber" type="text" required
+                    class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                    placeholder="03XX-XXXXXXX" autocomplete="off"
+                    autocapitalize="off" maxlength="12"
+                    spellcheck="true"/>
+            <!-- Exclamation Badge -->
+            <div
+                    @click="showHint = !showHint"
+                    :class="{ 'hidden': showHint }"
+                    class="absolute inset-y-2 mt-4 pt-2 right-5 flex items-center justify-center cursor-pointer"
+            >
+                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+            </div>
+            <!-- Tooltip Hint -->
+            <div x-show="showHint" @click.outside="showHint = false" x-transition x-cloak
+                 class="relative right-0 top-full mt-2 w-[calc(200%-1rem)] max-w-full text-[12px] text-white rounded-md p-2 bg-gray-800 shadow-lg z-10">
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[12px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+                Enter an 11-digit mobile number like 0301-5415428. Only valid Pakistani prefixes are allowed, and numbers must not be all zeros or fully repeated/sequential.
+            </div>
+        </div>
+    </div>
+    <!-- Affiliation Select -->
+    <div id="affiliationWrapper" class="col-span-12 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Affiliation <span class="text-red-600">*</span>
+            </label>
+
+            <select required
+                    id="affiliation" name="affiliation"
+                    class="form-input h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                    onchange="handleAffiliationChange()"
+            >
+                <option value="" disabled selected>Select</option>
+                <option value="GOVERNMENT">Government</option>
+                <option value="BMGF">BMGF</option>
+                <option value="WHO">WHO</option>
+                <option value="Others">Others</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Additional Input for 'Others' with Hint -->
+    <div id="otherWrapper" x-data="{ showHint: false }" class="hidden col-span-12 md:col-span-2">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Specify (Affiliation) <span class="text-red-600">*</span>
+            </label>
+
+            <input
+                    id="otherAffiliation"
+                    name="otherAffiliation"
+                    type="text"
+                    class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[10px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:ring-green-800"
+                    placeholder="Enter your affiliation"
+                    disabled
+            />
+
+            <!-- Hint Icon -->
+            <div
+                    @click="showHint = !showHint"
+                    :class="{ 'hidden': showHint }"
+                    class="absolute inset-y-2 mt-4 pt-2 right-5 flex items-center justify-center cursor-pointer"
+            >
+                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+            </div>
+
+            <!-- Hint Box -->
+            <div x-show="showHint" @click.outside="showHint = false" x-transition x-cloak
+                 class="relative right-0 top-full mt-2 w-[calc(200%-1rem)] max-w-full text-[12px] text-white rounded-md p-2 bg-gray-800 shadow-lg z-10">
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[12px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+                Please provide your exact organization name if you selected "Others".
+            </div>
+        </div>
+    </div>
+    <div class="col-span-12 md:col-span-3">
+        <!-- Gender Select Input -->
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                User Role <span class="text-red-600">*</span>
+            </label>
+
+            <select required
+                    id="userrole" name="userrole"
+                    class="form-input h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                    @change="onRoleChange($event)" onchange="handleUserRoleChange()"
+            >
+                <option value="" disabled selected>Select</option>
+                <option value="1">Administrator</option>
+                <option value="2">National Manager</option>
+                <option value="3">Province Manager</option>
+                <option value="11">Division Manager</option>
+                <option value="4">District Manager</option>
+                <option value="12">Tehsil Manager</option>
+                <option value="5">UC Manager</option>
+                <!--                <option value="6">Data Quality Officer</option>-->
+                <!--                <option value="7">guest_viewer</option>-->
+            </select>
+        </div>
+    </div>
+    <div x-data="{ showHint: false }" class="col-span-10 md:col-span-3">
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Designation
+            </label>
+
+            <input
+                    id="designation"
+                    name="designation"
+                    type="text"
+                    class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
+                    placeholder="Enter your designation"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="true"
+            />
+
+            <!-- Hint Toggle Icon -->
+            <div
+                    @click="showHint = !showHint"
+                    :class="{ 'hidden': showHint }"
+                    class="absolute inset-y-2 mt-4 pt-2 right-5 flex items-center justify-center cursor-pointer"
+            >
+                <span class="inline-flex items-center justify-center w-5 h-5 text-[8px] font-bold text-white bg-gray-500 rounded-full">!</span>
+            </div>
+
+            <!-- Hint Box -->
+            <div x-show="showHint" @click.outside="showHint = false" x-transition x-cloak
+                 class="relative right-0 top-full mt-2 w-[calc(200%-1rem)] max-w-full text-[12px] text-white rounded-md p-2 bg-gray-800 shadow-lg z-10">
+                <div class="inline-flex items-center justify-center w-5 h-5 text-[12px] font-bold text-white bg-gray-500 rounded-full">
+                    !
+                </div>
+                Please provide your job title or role, e.g., "Program Manager" or "Field Officer".
+            </div>
+        </div>
+    </div>
+
+    <!-- Province and Admin Selection -->
+    <div id="ProvinceMain" x-data="{ provinceSelected: false }"
+         class="col-span-12 md:col-span-3">
+        <div x-show="">
+            <!-- Gender Select Input -->
+            <div id="ProvinceSelected" class="relative">
+
+                <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                    Province <span class="text-red-600">*</span>
+                </label>
+
+                <select id="provincename" name="provincename"
+                        class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                        @change="provinceSelected = $event.target.value !== ''"
+                >
+                    <option value="" disabled selected>Select</option>
+                </select>
+
+            </div>
+
+            <!-- Province Admin Section -->
+            <div id="provinceToggle" x-show="provinceSelected"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-2"
+                 class="mt-2 rounded-xl border border-gray-200 bg-white pt-2 pl-2 shadow-md dark:border-gray-700 dark:bg-gray-900">
+                <!-- Title -->
+                <!-- Wrap toggles in a vertical layout -->
+                <div class="space-y-4">
+                    <!-- Toggle Item -->
+                    <div x-data="{ toggle: false }" data-toggle-scope="province"
+                         class="pb-0 flex items-center gap-3">
+                        <input type="hidden" name="is_province_admin" :value="toggle">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer flex items-center gap-3">
+                            <div class="relative">
+                                <input type="checkbox" class="sr-only role-toggle"
+                                       @change="toggle = !toggle"/>
+
+                                <div
+                                        class="block h-6 w-11 rounded-full transition-colors duration-300"
+                                        :class="toggle ? 'bg-green-500' : 'bg-gray-300 dark:bg-white/10'"
+                                ></div>
+                                <div
+                                        class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-300"
+                                        :class="toggle ? 'translate-x-full' : 'translate-x-0'"
+                                ></div>
+                            </div>
+                            Is Province Admin ?
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="DivisionMain" x-data="{ divisionSelected: false }"
+         class="col-span-12 md:col-span-3">
+        <div x-show="">
+            <!-- Gender Select Input -->
+            <div id="DivisionSelected" class="relative">
+                <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                    Division <span class="text-red-600">*</span>
+                </label>
+
+                <select id="divisionname" name="divisionname"
+                        class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                        @change="divisionSelected = $event.target.value !== ''"
+                >
+                    <option value="" disabled selected>Select</option>
+                </select>
+            </div>
+
+            <!-- Province Admin Section -->
+            <div id="divisionToggle" x-show="divisionSelected"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-2"
+                 class="mt-2 rounded-xl border border-gray-200 bg-white pt-2 pl-2 shadow-md dark:border-gray-700 dark:bg-gray-900">
+                <!-- Title -->
+                <!-- Wrap toggles in a vertical layout -->
+                <div class="space-y-4">
+                    <!-- Toggle Item -->
+                    <div x-data="{ toggle: false }" data-toggle-scope="division"
+                         class="pb-0 flex items-center gap-3">
+                        <input type="hidden" name="is_division_admin" :value="toggle">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer flex items-center gap-3">
+                            <div class="relative">
+                                <input type="checkbox" class="sr-only role-toggle"
+                                       @change="toggle = !toggle"/>
+                                <div
+                                        class="block h-6 w-11 rounded-full transition-colors duration-300"
+                                        :class="toggle ? 'bg-green-500' : 'bg-gray-300 dark:bg-white/10'"
+                                ></div>
+                                <div
+                                        class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-300"
+                                        :class="toggle ? 'translate-x-full' : 'translate-x-0'"
+                                ></div>
+                            </div>
+                            Is Division Admin ?
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="DistrictMain" x-data="{ districtSelected: false }"
+         class="col-span-12 md:col-span-3">
+        <div x-show="">
+            <!-- Gender Select Input -->
+            <div id="DistrictSelected" class="relative">
+                <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                    District <span class="text-red-600">*</span>
+                </label>
+
+                <select id="districtname" name="districtname"
+                        class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                        @change="districtSelected = $event.target.value !== ''"
+                >
+                    <option value="" disabled selected>Select</option>
+                </select>
+            </div>
+
+            <!-- Province Admin Section -->
+            <div id="districtToggle" x-show="districtSelected"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-2"
+                 class="mt-2 rounded-xl border border-gray-200 bg-white pt-2 pl-2 shadow-md dark:border-gray-700 dark:bg-gray-900">
+                <!-- Title -->
+                <!-- Wrap toggles in a vertical layout -->
+                <div class="space-y-4">
+                    <!-- Toggle Item -->
+                    <div x-data="{ toggle: false }" data-toggle-scope="district"
+                         class="pb-0 flex items-center gap-3">
+                        <input type="hidden" name="is_district_admin" :value="toggle">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer flex items-center gap-3">
+                            <div class="relative">
+                                <input type="checkbox" class="sr-only role-toggle"
+                                       @change="toggle = !toggle"/>
+                                <div
+                                        class="block h-6 w-11 rounded-full transition-colors duration-300"
+                                        :class="toggle ? 'bg-green-500' : 'bg-gray-300 dark:bg-white/10'"
+                                ></div>
+                                <div
+                                        class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-300"
+                                        :class="toggle ? 'translate-x-full' : 'translate-x-0'"
+                                ></div>
+                            </div>
+                            Is District Admin ?
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="TehsilMain" x-data="{ tehsilSelected: false }"
+         class="col-span-12 md:col-span-3">
+        <div x-show="">
+            <!-- Gender Select Input -->
+            <div id="TehsilSelected" class="relative">
+                <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                    Tehsil <span class="text-red-600">*</span>
+                </label>
+
+                <select id="tehsilname" name="tehsilname"
+                        class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                        @change="tehsilSelected = $event.target.value !== ''"
+                >
+                    <option value="" disabled selected>Select</option>
+                </select>
+            </div>
+
+            <!-- Province Admin Section -->
+            <div id="tehsilToggle" x-show="tehsilSelected"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-2"
+                 class="mt-2 rounded-xl border border-gray-200 bg-white pt-2 pl-2 shadow-md dark:border-gray-700 dark:bg-gray-900">
+                <!-- Title -->
+                <!-- Wrap toggles in a vertical layout -->
+                <div class="space-y-4">
+                    <!-- Toggle Item -->
+                    <div x-data="{ toggle: false }" data-toggle-scope="tehsil"
+                         class="pb-0 flex items-center gap-3">
+                        <input type="hidden" name="is_tehsil_admin" :value="toggle">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer flex items-center gap-3">
+                            <div class="relative">
+                                <input type="checkbox" class="sr-only role-toggle"
+                                       @change="toggle = !toggle"/>
+                                <div
+                                        class="block h-6 w-11 rounded-full transition-colors duration-300"
+                                        :class="toggle ? 'bg-green-500' : 'bg-gray-300 dark:bg-white/10'"
+                                ></div>
+                                <div
+                                        class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-300"
+                                        :class="toggle ? 'translate-x-full' : 'translate-x-0'"
+                                ></div>
+                            </div>
+                            Is Tehsil Admin ?
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="UCMain" class="col-span-12 md:col-span-3">
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            Union Councils <span class="text-red-600">*</span>
+        </label>
+
+        <select id="ucselection" name="ucname[]" multiple required
+                class="w-full rounded-xl border border-gray-300 bg-white px-2 py-1 text-[7px] text-gray-800 shadow-sm focus:border-green-500 focus:ring-1 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+        </select>
+    </div>
+    <div x-data="{ allowedUserType: false }" class="col-span-12 md:col-span-2">
+
+        <!-- Gender Select Input -->
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Entry Permission <span class="text-red-600">*</span>
+            </label>
+
+            <select id="userentry" name="userentry" required
+                    class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                    @change="allowedUserType = $event.target.value !== ''"
+            >
+                <option value="" disabled selected>Select</option>
+                <option value="SMC">Still Missed Children</option>
+                <option value="ZD">Zero Dose Children</option>
+            </select>
+        </div>
+    </div>
+    <div x-data="{ allowedUserType: false }" class="col-span-12 md:col-span-1">
+
+        <!-- Gender Select Input -->
+        <div class="relative">
+            <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                Status <span class="text-red-600">*</span>
+            </label>
+
+            <select id="accountstatus" name="accountstatus" required
+                    class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                    @change="allowedUserType = $event.target.value !== ''"
+            >
+                <option value="" disabled selected>Select</option>
+                <option value="Active">Active</option>
+                <option value="InActive">Inactive</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-span-12 md:col-span-6">
+        <label for="address" class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            Address <span class="text-red-600">*</span>
+        </label>
+
+        <textarea
+                id="address"
+                name="address"
+                rows="1"
+                class="w-full h-auto resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 text-[12px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800"
+                placeholder="Enter your full address"
+                autocomplete="off"
+                spellcheck="true"
+        ></textarea>
+    </div>
+
+
+</div>
