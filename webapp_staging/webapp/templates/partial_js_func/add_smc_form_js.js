@@ -51,7 +51,79 @@
 
 })();
 </script>
+<script>
+    function setupTablePagination({
+    tableBody,
+    searchInput,
+    prevBtn,
+    nextBtn,
+    pageInfo,
+    rowsPerPage = 5
+}) {
+    let currentPage = 1;
 
+    function paginate() {
+    const rows = Array.from(tableBody.querySelectorAll("tr"));
+    const filter = (searchInput?.value || "").toLowerCase();
+
+    // Filter rows
+    const filteredRows = filter
+    ? rows.filter(row => row.innerText.toLowerCase().includes(filter))
+    : rows;
+
+    // Compute pages
+    const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+
+    // Clamp current page
+    currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+
+    // Hide all rows
+    rows.forEach(row => (row.style.display = "none"));
+
+    // Show only current page slice
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    filteredRows.slice(start, end).forEach(row => (row.style.display = ""));
+
+    // Update UI
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    prevBtn.disabled = currentPage === 1 || filteredRows.length === 0;
+    nextBtn.disabled = currentPage === totalPages || filteredRows.length === 0;
+}
+
+    // Reset pagination and rerun
+    function resetPagination() {
+    currentPage = 1;
+    paginate();
+}
+
+    // Event listeners
+    searchInput.addEventListener("input", resetPagination);
+
+    prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+    currentPage--;
+    paginate();
+}
+});
+
+    nextBtn.addEventListener("click", () => {
+    currentPage++;
+    paginate();
+});
+
+    // Observe table changes
+    const observer = new MutationObserver(resetPagination);
+    observer.observe(tableBody, {childList: true});
+
+    // Initial call
+    if (tableBody.querySelector("tr")) resetPagination();
+
+    // Return function to manually reapply pagination if needed
+    return {paginate, resetPagination};
+}
+
+</script>
 <script>
     const modal = document.getElementById("profileModal");
     const openBtn = document.getElementById("openModalBtn");
@@ -79,7 +151,16 @@
     document.getElementById('childModal').classList.remove('hidden');
 });
 </script>
-
+<script>
+function openTeamModal() {
+    document.getElementById('teamModal').classList.remove('hidden');
+    document.getElementById('teamModal').classList.add('flex');
+}
+function closeTeamModal() {
+    document.getElementById('teamModal').classList.remove('flex');
+    document.getElementById('teamModal').classList.add('hidden');
+}
+</script>
 <script>
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('expectedReturn').setAttribute('max', today);
@@ -87,92 +168,38 @@
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date(); // Current date
+
     const picker = new Litepicker({
-    element: document.getElementById("date"),
-    format: "DD-MM-YYYY",
-    autoApply: true,
-    allowRepick: true,
-    dropdowns: {
-    minYear: 2024,
-    maxYear: 2050,
-    months: true,
-    years: true,
-},
-    setup: (picker) => {
-    picker.on("show", () => {
-    setTimeout(() => {
-    const panel = document.querySelector(".litepicker");
-    if (panel) {
-    panel.style.borderRadius = "12px";
-    panel.style.padding = "10px";
-    panel.style.fontSize = "13px";
-    panel.style.transition = "all 0.3s ease-in-out";
-}
-}, 10);
-});
-}
-});
-});
-</script>
-<script>
-    const rowsPerPage2 = 3; // rows per page
-    let currentPage2 = 1;
-
-    const tableBody2 = document.getElementById("tableBody2");
-    let allRows2 = Array.from(tableBody2.getElementsByTagName("tr"));
-    let filteredRows2 = [...allRows2]; // default: show all rows
-
-    function updatePagination2() {
-    const input = document.getElementById("tableSearch2").value.toLowerCase();
-
-    // Filter rows
-    filteredRows2 = allRows2.filter(row =>
-    row.textContent.toLowerCase().includes(input)
-    );
-
-    // Reset page
-    currentPage2 = 1;
-    showPage2(currentPage2);
-}
-
-    function showPage2(page) {
-    const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-
-    if (page < 1) page = 1;
-    if (page > totalPages) page = totalPages;
-
-    // Hide all first
-    allRows2.forEach(row => row.style.display = "none");
-
-    // Show only relevant slice
-    const start = (page - 1) * rowsPerPage2;
-    const end = start + rowsPerPage2;
-    filteredRows2.slice(start, end).forEach(row => row.style.display = "");
-
-    // Update page indicator
-    document.getElementById("currentPage2").textContent = `${page} / ${totalPages}`;
-    currentPage2 = page;
-}
-
-    function prevPage2() {
-    if (currentPage2 > 1) {
-    showPage2(currentPage2 - 1);
-}
-}
-
-    function nextPage2() {
-    const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-    if (currentPage2 < totalPages) {
-    showPage2(currentPage2 + 1);
-}
-}
-
-    // Initialize when DOM ready
-    document.addEventListener("DOMContentLoaded", () => {
-    showPage2(1);
+        element: document.getElementById("date"),
+        format: "DD-MM-YYYY",
+        autoApply: true,
+        allowRepick: true,
+        minDate: today, // Only allow today or future dates
+        dropdowns: {
+            minYear: today.getFullYear(), // start from current year
+            maxYear: 2050,
+            months: true,
+            years: true,
+        },
+        setup: (picker) => {
+            picker.on("show", () => {
+                setTimeout(() => {
+                    const panel = document.querySelector(".litepicker");
+                    if (panel) {
+                        panel.style.borderRadius = "12px";
+                        panel.style.padding = "10px";
+                        panel.style.fontSize = "13px";
+                        panel.style.transition = "all 0.3s ease-in-out";
+                    }
+                }, 10);
+            });
+        }
+    });
 });
 </script>
+
 <script>
     const openBtn = document.getElementById("openModalBtn");
     const closeBtn = document.getElementById("closeModalBtn");
@@ -535,6 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
             idcampaign: form.querySelector("#campaignname").value,
             iduc: form.querySelector("#ucname").value,
             supervisor_name: form.querySelector("#aicname").value,
+            supervisor_full_name: form.querySelector("#fullname").value,
             enteredby: window.user_info?.idusers || 10 // fallback
         };
 
@@ -556,8 +584,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     icon: "success",
                     title: "AIC Successfully Added",
                     text: `Header ID: ${data.idheader ?? "N/A"}`,
-                    showConfirmButton: true,
-                    confirmButtonColor: "#3085d6"
+                    showConfirmButton: false,
+                    confirmButtonColor: "#3085d6",
+                    timer: 1500,          // Auto close after 1500ms
+                    timerProgressBar: true
                 });
 
                 // reset form
@@ -574,7 +604,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 Swal.fire({
                     icon: "error",
                     title: "Failed to Add AIC",
-                    text: data.message || "Something went wrong.",
+                    text: data.detail || data.message || "Something went wrong.",
                     confirmButtonColor: "#d33"
                 });
             }
@@ -665,7 +695,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     icon: "success",
                     title: "Team Info Successfully Proceed",
                     text: `Team ID: ${data.idteam}`,
-                    confirmButtonColor: "#3085d6"
+                    showConfirmButton: false,
+                    confirmButtonColor: "#3085d6",
+                    timer: 1500,          // Auto close after 1500ms
+                    timerProgressBar: true
+
                 });
                 form.reset(); // now works
                 modal.removeAttribute("open");
@@ -673,13 +707,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 editingTeamId=null;
                 showDiv("childinformation");
                 loadTeamOptions(idheader);
-                toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextpage2", "prevpage2","tableSearch2"],"hide");
+                toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextpage2","pageInfo2", "prevpage2","tableSearch2"],"hide");
             } else {
                 Swal.fire({
                     icon: "error",
                     title: "Failed to Add/Edit Team",
                     text: data.message || "Something went wrong.",
-                    confirmButtonColor: "#d33"
+                    showConfirmButton: false,
+                    confirmButtonColor: "#3085d6",
+                    timer: 1500,          // Auto close after 1500ms
+                    timerProgressBar: true
+
                 });
             }
         } catch (err) {
@@ -687,16 +725,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon: "error",
                 title: "Server Error",
                 text: err.message || "Could not connect to server",
-                confirmButtonColor: "#d33"
+                showConfirmButton: false,
+                confirmButtonColor: "#3085d6",
+                timer: 1500,          // Auto close after 1500ms
+                timerProgressBar: true
+
             });
         }
     });
 });
+    const paginations = setupTablePagination({
+    tableBody: document.getElementById("tableBody"),
+    searchInput: document.getElementById("tableSearch"),
+    prevBtn: document.getElementById("prevPage"),
+    nextBtn: document.getElementById("nextPage"),
+    pageInfo: document.getElementById("pageInfo"),
+    rowsPerPage: 3 // any number you want
+});
+
+    // If you fetch new rows dynamically later, just call:
+    paginations.resetPagination();
 
 </script>
 
 <script>
-const rowsPerPage = 1;
+const rowsPerPage = 3;
 let currentPage = 1;
 const tableBody = document.getElementById("tableBody");
 const searchInput = document.getElementById("tableSearch");
@@ -717,22 +770,26 @@ async function loadTeamData(idheader) {
         if (data.status !== "success" || !data.data || data.data.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4">No team members found</td></tr>`;
         } else {
-            data.data.forEach(team => {
+            data.data.forEach((team,i) => {
                 const row = document.createElement("tr");
                 row.classList.add("hover:bg-gray-50", "transition-colors", "duration-150");
                 row.innerHTML = `
-                    <td class="px-6 py-4 border-b border-gray-200">${team.idteam}</td>
-                    <td class="px-6 py-4 border-b border-gray-200 font-medium text-gray-900">${team.team_no}</td>
-                    <td class="px-6 py-4 border-b border-gray-200">${team.team_member}</td>
-                    <td class="px-6 py-4 border-b border-gray-200 text-center flex justify-center space-x-2">
-                        <button onclick="openEditModal('${team.idteam}','${team.team_no}','${team.team_member}')"
-                                class="text-blue-600 hover:text-blue-800 px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg flex items-center justify-center transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round">
-                                <path d="M13 21h8"/>
-                                <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
-                            </svg>
+                    <td class="px-6 py-2 border-b border-gray-200">${i+1}</td>
+                    <td class="px-6 py-2 border-b border-gray-200">${team.idteam}</td>
+                    <td class="px-6 py-2 border-b border-gray-200 font-medium text-gray-900">${team.team_no}</td>
+                    <td class="px-6 py-2 border-b border-gray-200">${team.team_member}</td>
+                    <td class="px-6 py-2 border-b border-gray-200 text-center flex justify-center space-x-2">
+                        <button type="button"
+                                class="edit-btn text-blue-600 hover:text-blue-800 px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg flex items-center justify-center transition"
+                                data-idteam="${team.idteam}"
+                                data-teamno="${team.team_no}"
+                                data-teammember="${team.team_member}">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                               stroke-linejoin="round">
+                            <path d="M13 21h8"/>
+                            <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+                          </svg>
                         </button>
                         <button onclick="deleteTeamMember('${team.idteam}')"
                                 class="text-red-600 hover:text-red-800 px-3 py-2 bg-red-100 hover:bg-red-200 rounded-lg flex items-center justify-center transition">
@@ -752,50 +809,77 @@ async function loadTeamData(idheader) {
         }
 
         // Save rows for pagination
-        tableBody.filteredRows = Array.from(tableBody.getElementsByTagName("tr"));
-        currentPage = 1;
-        showPage(currentPage);
-
-        // Attach search event inside function so it's auto-handled
-        searchInput.addEventListener("input", () => {
-            const input = searchInput.value.toLowerCase();
-            tableBody.filteredRows = Array.from(tableBody.getElementsByTagName("tr"))
-                .filter(row => row.textContent.toLowerCase().includes(input));
-            currentPage = 1;
-            showPage(currentPage);
-        });
 
     } catch (err) {
         console.error("Failed to load team data:", err);
         tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-600">Error loading data</td></tr>`;
         tableBody.filteredRows = Array.from(tableBody.getElementsByTagName("tr"));
-        showPage(1);
     }
 }
 
-function showPage(page) {
-    const rows = tableBody.filteredRows || Array.from(tableBody.getElementsByTagName("tr"));
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    rows.forEach((row, idx) => row.style.display = (idx >= start && idx < end) ? "" : "none");
-    document.getElementById("currentPage").textContent = page;
-}
-
-function prevPage() { if (currentPage > 1) { currentPage--; showPage(currentPage); } }
-function nextPage() { const rows = tableBody.filteredRows || Array.from(tableBody.getElementsByTagName("tr")); if (currentPage * rowsPerPage < rows.length) { currentPage++; showPage(currentPage); } }
 </script>
 <script>
-    window.openEditModal = function(idteam, team_no, team_member) {
-    // Fill modal fields
-    document.getElementById("teamNumber").value = team_no;
-    document.getElementById("teamName").value = team_member;
 
-    document.getElementById("teamModal").setAttribute("open", "");
-    editingTeamId = idteam;
+// Utilities to show/hide the modal (Tailwind: hidden <-> flex)
+function showTeamModal() {
+  const modal = document.getElementById('teamModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function hideTeamModal() {
+  const modal = document.getElementById('teamModal');
+  modal.classList.remove('flex');
+  modal.classList.add('hidden');
+
+  // reset state
+  editingTeamId = null;
+  document.getElementById('teamNumber').value = '';
+  document.getElementById('teamName').value = '';
+  // optional: reset title
+  const title = document.getElementById('modalTitle');
+  if (title) title.querySelector('span.flex-none').textContent = 'ADD TEAM INFORMATION';
+}
+
+// Expose close for your ✕ button if it uses onclick
+window.closeTeamModal = hideTeamModal;
+
+// Open for "Add Team" button (if you have one calling this)
+window.openTeamModal = function () {
+  const title = document.getElementById('modalTitle');
+  if (title) title.querySelector('span.flex-none').textContent = 'ADD TEAM INFORMATION';
+  showTeamModal();
 };
 
+// Delegate clicks for ANY .edit-btn (no globals needed on the button)
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.edit-btn');
+  if (!btn) return;
+
+  const idteam = btn.dataset.idteam;
+  const team_no = btn.dataset.teamno;
+  const team_member = btn.dataset.teammember;
+
+  // Fill fields
+  document.getElementById('teamNumber').value = team_no || '';
+  document.getElementById('teamName').value = team_member || '';
+
+  // Title: Edit mode
+  const title = document.getElementById('modalTitle');
+  if (title) title.querySelector('span.flex-none').textContent = 'EDIT TEAM INFORMATION';
+
+  editingTeamId = idteam || null;
+  showTeamModal();
+});
+
+// Quality-of-life: close on backdrop click + ESC
+document.getElementById('teamModal')?.addEventListener('click', function (e) {
+  if (e.target.id === 'teamModal') hideTeamModal();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') hideTeamModal();
+});
 </script>
+
 <script>
 async function loadTeamOptions(idheader) {
     const select = document.getElementById("setoptions");
@@ -854,7 +938,7 @@ function toggleElementsById(ids, state) {
 </script>
 <script>
     document.getElementById("setoptions").addEventListener("change", function () {
-        toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextpage2", "prevpage2","tableSearch2"],'show');
+        toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2","pageInfo2", "nextpage2", "prevpage2","tableSearch2"],'show');
     });
 </script>
 <script>
@@ -867,6 +951,7 @@ const optionsMap = {
     { value: "In School", label: "In School" },
     { value: "Inside District", label: "Inside District" },
     { value: "Outside District", label: "Outside District" },
+    { value: "Outside UC", label: "Outside UC" },
     { value: "Sleeping", label: "Sleeping" }
   ],
   Refusal: [
@@ -907,14 +992,26 @@ missedReason.addEventListener("change", function () {
 
   subReason.disabled = false; // enable only if options exist
 });
+document.getElementById("subReason").addEventListener("change", function () {
+    const locationContainer = document.getElementById("locationContainer");
+    const locationInput = document.getElementById("location");
+    const value = this.value;
+
+    if (value === "Outside District" || value === "Outside UC") {
+        locationContainer.classList.remove("hidden");
+        locationInput.setAttribute("required", "true");
+    } else {
+        locationContainer.classList.add("hidden");
+        locationInput.removeAttribute("required");
+        locationInput.value = ""; // clear old input if hidden
+    }
+});
 </script>
 
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("update_user_profile");
-    const rowsPerPage2 = 3;
-    let currentPage2 = 1;
 
     const tableBody2 = document.getElementById("tableBody2");
     let allRows2 = [];
@@ -1058,48 +1155,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Custom delete logic for:", id);
         }
 
-        allRows2 = Array.from(tableBody2.getElementsByTagName("tr"));
-        filteredRows2 = [...allRows2];
-        showPage2(1);
+
     }
 
-    function updatePagination2() {
-        const input = document.getElementById("tableSearch2").value.toLowerCase();
-        filteredRows2 = allRows2.filter(row =>
-            row.textContent.toLowerCase().includes(input)
-        );
-        currentPage2 = 1;
-        showPage2(currentPage2);
-    }
-
-    function showPage2(page) {
-        const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
-
-        allRows2.forEach(row => row.style.display = "none");
-
-        const start = (page - 1) * rowsPerPage2;
-        const end = start + rowsPerPage2;
-        filteredRows2.slice(start, end).forEach(row => row.style.display = "");
-
-        document.getElementById("currentPage2").textContent = `${page} / ${totalPages}`;
-        currentPage2 = page;
-    }
-
-    function prevPage2() {
-        if (currentPage2 > 1) {
-            showPage2(currentPage2 - 1);
-        }
-    }
-
-    function nextPage2() {
-        const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-        if (currentPage2 < totalPages) {
-            showPage2(currentPage2 + 1);
-        }
-    }
 
     async function submitChildData(payload, editChildRecord = null) {
         try {
@@ -1151,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 timerProgressBar: true,
                 showConfirmButton: false,
             });
+            document.getElementById("locationContainer").classList.add("hidden");
             return data;
         } catch (err) {
             Swal.fire({
@@ -1229,20 +1288,143 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon: "error",
                 title: "Oops!",
                 text: error.message || "Something went wrong",
-                confirmButtonColor: "#dc2626" // Tailwind red-600
+            showConfirmButton: false,
+                confirmButtonColor: "#3085d6",
+                timer: 1500,          // Auto close after 1500ms
+                timerProgressBar: true
+
             });
         }
     });
 });
+        const pagination = setupTablePagination({
+    tableBody: document.getElementById("tableBody2"),
+    searchInput: document.getElementById("tableSearch2"),
+    prevBtn: document.getElementById("prevPage2"),
+    nextBtn: document.getElementById("nextPage2"),
+    pageInfo: document.getElementById("pageInfo2"),
+    rowsPerPage: 5 // any number you want
+});
+
+    // If you fetch new rows dynamically later, just call:
+    pagination.resetPagination();
 </script>
 <script>
 
 document.getElementById("openModalBtn").addEventListener("click", (e) => {
     e.preventDefault(); // prevent default form submission
     document.getElementById("update_user_profile").reset(); // reset the form
+    editingChildRecord=null;
 });
-
-
 
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize validation states
+    window.validationStates = {
+        fathername: false,
+        childname: false,
+    };
+
+    // Toggle submit button
+    function toggleSubmitButtonedit() {
+        const btn = document.getElementById('submitchildata');
+        if (!btn) return;
+
+        const allValid = Object.values(window.validationStates).every(v => v === true);
+
+        if (allValid) {
+            btn.disabled = false;
+            btn.style.removeProperty('background-color');
+            btn.style.removeProperty('background-image');
+            btn.style.removeProperty('border-color');
+            btn.style.removeProperty('cursor');
+        } else {
+            btn.disabled = true;
+            btn.style.setProperty('background-color', 'gray', 'important');
+            btn.style.setProperty('background-image', 'none', 'important');
+            btn.style.setProperty('border-color', 'gray', 'important');
+            btn.style.setProperty('cursor', 'not-allowed', 'important');
+        }
+    }
+
+    // Strict name validation
+    function validateName(input, fieldKey, fieldDisplayName) {
+        const value = input.value;
+
+        const minLength = 3;
+        const maxLength = 50;
+        const onlyLettersSpaces = /^[A-Za-z ]+$/;
+        const repeatedWords = /\b(\w+)\s+\1\b/i; // 2 repeated words
+        const tripleRepeatedWords = /\b(\w+)\s+\1\s+\1\b/i; // 3 repeated words
+        const doubleSpaces = /\s{2,}/;
+        const tripleLetters = /(.)\1\1/;
+        const hasNumbers = /\d/;
+        const singleLetterWord = /\b\w\b/;
+
+        let error = "";
+
+        if (!value.trim()) {
+            error = `${fieldDisplayName} is required.`;
+        } else if (value !== value.trim()) {
+            error = `${fieldDisplayName} cannot have spaces at the start or end.`;
+        } else if (value.length < minLength) {
+            error = `${fieldDisplayName} must be at least ${minLength} characters.`;
+        } else if (value.length > maxLength) {
+            error = `${fieldDisplayName} cannot exceed ${maxLength} characters.`;
+        } else if (!onlyLettersSpaces.test(value)) {
+            error = `${fieldDisplayName} can only contain letters and spaces.`;
+        } else if (doubleSpaces.test(value)) {
+            error = `${fieldDisplayName} cannot contain consecutive spaces.`;
+        } else if (repeatedWords.test(value)) {
+            error = `${fieldDisplayName} cannot contain repeated words.`;
+        } else if (tripleRepeatedWords.test(value)) {
+            error = `${fieldDisplayName} cannot contain three identical words in sequence.`;
+        } else if (tripleLetters.test(value)) {
+            error = `${fieldDisplayName} cannot contain the same letter three times in a row.`;
+        } else if (hasNumbers.test(value)) {
+            error = `${fieldDisplayName} cannot contain numbers.`;
+        } else if (singleLetterWord.test(value)) {
+            error = `${fieldDisplayName} cannot contain single-letter words.`;
+        }
+
+        if (error) {
+            input.classList.remove("border-gray-300");
+            input.classList.add("border-red-500", "focus:ring-red-300");
+
+            setTimeout(() => {
+                input.classList.remove("border-red-500", "focus:ring-red-300");
+                input.classList.add("border-gray-300");
+            }, 3000);
+
+            toastr.error(error, "Validation Error");
+            window.validationStates[fieldKey] = false;
+        } else {
+            window.validationStates[fieldKey] = true;
+        }
+
+        toggleSubmitButtonedit();
+    }
+
+    // Inputs
+    const fatherInput = document.getElementById("fathername");
+    const childInput = document.getElementById("childname");
+
+    // Event listeners
+    fatherInput.addEventListener("blur", () => validateName(fatherInput, "fathername", "Father Name"));
+    childInput.addEventListener("blur", () => validateName(childInput, "childname", "Child Name"));
+
+    // Toastr options
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "timeOut": "3000",
+        "extendedTimeOut": "1000",
+        "positionClass": "toast-top-right"
+    };
+
+    // Initialize button state
+    toggleSubmitButtonedit();
+});
+</script>

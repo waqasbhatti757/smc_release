@@ -448,6 +448,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = e.target;
     const formData = new FormData(form);
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    console.log(form.action);
     // Show loading indicator
   Swal.fire({
     title: 'Updating...',
@@ -498,4 +499,11 @@ document.addEventListener('DOMContentLoaded', function () {
     console.error(error);
 }
 });
+const entrySelect = document.getElementById('userentry');
+if (entrySelect && user_infos.entry_allowed) {
+    entrySelect.value = user_infos.entry_allowed;
+    entrySelect.disabled = true;
+    // Optional: trigger change for Alpine.js reactivity
+    entrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+}
 </script>

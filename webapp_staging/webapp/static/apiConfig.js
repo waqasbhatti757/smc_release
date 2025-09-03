@@ -1,1 +1,1 @@
-export const API_BASE_URL = "https://smcv2.eoc.gov.pk";
+export const API_BASE_URL = "http://192.168.2.232:8001";

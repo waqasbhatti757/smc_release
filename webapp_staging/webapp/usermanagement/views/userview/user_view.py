@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import requests
 import json
 from asgiref.sync import sync_to_async
@@ -14,6 +14,10 @@ load_dotenv()
 FASTAPI_BASE_URL = os.getenv("FAST_API_URL")
 
 async def create_user(request):
+    user_info = await sync_to_async(request.session.get)('user_info')
+    if user_info.get("is_first_time_login") == 1:
+        return await sync_to_async(redirect)('dashboard:user_dashboard')
+
     if request.method == "POST":
         result = await process_user_data(request.POST)
         user_info = await sync_to_async(request.session.get)('user_info')
@@ -72,6 +76,10 @@ async def update_user_profile(request):
 
 
 async def manage_user(request):
+    user_info = await sync_to_async(request.session.get)('user_info')
+    if user_info.get("is_first_time_login") == 1:
+        return await sync_to_async(redirect)('dashboard:user_dashboard')
+
     context = await get_user_geo_context(request)
     # headers = {'accept': 'application/json','Content-Type': 'application/json',}
     # json_data = {'limit': 400,'offset': 0,}
@@ -256,3 +264,42 @@ async def full_profile_update(request):
                 return JsonResponse({"success": False, "msg": f"FastAPI error: {response.text}"}, status=response.status_code)
         except httpx.RequestError as exc:
             return JsonResponse({"success": False, "msg": f"Request failed: {exc}"}, status=500)
+
+
+
+async def change_my_profile(request):
+    """
+    Django async view that receives the request from JS,
+    forwards it to FastAPI endpoint, and returns status & message.
+    """
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Invalid request method"})
+
+    body = json.loads(request.body)
+    user_id = body.get("idusers")
+
+    if not user_id:
+        return JsonResponse({"status": "error", "message": "User ID missing"})
+
+    try:
+        # Async call to FastAPI endpoint
+        async with httpx.AsyncClient() as client:
+            url = FASTAPI_BASE_URL + f"/campaign/toggle/user/status?idusers={user_id}"
+            resp = await client.post(
+                url,
+                timeout=1000
+            )
+            # FastAPI returns a dict like {"status": "success", "message": "...", "data": {...}}
+            result = resp.json()
+
+        # Only return relevant info to JS
+        return JsonResponse({
+            "status": result.get("status"),
+            "message": result.get("message")
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": f"Unexpected error: {str(e)}"
+        })

@@ -9,4 +9,10 @@ urlpatterns = [
     path("report-pmc/", views.report_new_pmc, name="report_new_pmc"),
     path("reports-smc/", views.reports_smc, name="reports_smc"),
     path("smc-followup/", views.smc_follow_up, name="smc_follow_up"),
+    path("manage_big_team_level_data/", views.manage_big_team_level_data, name="manage_big_team_level_data"),
+    path("manage_big_child_level_data/", views.manage_big_child_level_data, name="manage_big_child_level_data"),
 ]
+
+
+
+

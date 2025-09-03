@@ -214,6 +214,7 @@
                         BETA
                     </small>
                 </a>
+                <img src="{% static 'images/polio.png' %}" alt="Polio" style="font-size: 8px; width: 220px; height: auto;" />
 
                 <!-- Right side (User Dropdown) -->
                 <div class="relative" x-data="{ open: false }">
@@ -320,15 +321,15 @@
             <div class="col-md-12">
                 <ul class="nav content-tabs nav-tabs">
 
-                    {% if user_info.usertype|in_list:"1,2,3,4,5,6,7,8,9" %}
+                    {% if user_info.usertype|in_list:"1,2,3,4,5,6,7,8,9,11,12" %}
                     <li role="presentation"
                         class="dropdown {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false"><i class="fa fa-dashboard"></i> Dashboard <i
                                 class="fa fa-caret-down"></i></a>
                         <ul class="dropdown-menu">
-                            {% if user_info.usertype|in_list:"1,2,3,4,5,6,7,8,9" %}
-                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 6" %}
+                            {% if user_info.usertype|in_list:"1,2,3,4,5,6,7,8,9,11,12" %}
+                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 6, 11, 12" %}
 
                             <li class="{% if request.resolver_match.url_name == 'index' and request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
                                 <a href="{% url 'dashboard:user_dashboard' %}">Dashboard</a>
@@ -345,7 +346,7 @@
                             {% endif %}
 
 
-                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 5, 6, 7, 8, 9" %}
+                            {% if user_info.usertype|in_list:"1" %}
 
                             <li class="{% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'teamtracker' %}active{% endif %}">
                                 <a href="#">Team Tracker</a>
@@ -370,11 +371,12 @@
                            aria-expanded="false"><i class="fa fa-plus-square"></i> Add Campaign Data <i
                                 class="fa fa-caret-down"></i></a>
                         <ul class="dropdown-menu">
+                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12" %}
+                            {% if user_info.usertype == 1 or user_info.is_province_admin == 1 or user_info.is_district_admin == 1 or user_info.is_division_admin == 1 or user_info.is_tehsil_admin == 1 %}
                             <li class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                                 <a href="{% url 'campaign_data:add_campaign_data' %}">Add SMC Form</a>
                             </li>
 
-                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 5, 6, 7, 8, 9" %}
                             <li class="{% if request.resolver_match.url_name == 'editsheet' %}active{% endif %}">
                                 <a href="{% url 'campaign_data:edit_campaign_data' %}">Edit SMC Form</a>
                             </li>
@@ -386,17 +388,22 @@
                                 <a href="{% url 'campaign_data:read_campaign_data' %}">SMC Form Lists</a>
                             </li>
                             <li class="{% if request.resolver_match.url_name == 'form2b' %}active{% endif %}">
-                                <a href="{% url 'campaign_data:reports_smc' %}">SMC Linelist Report</a>
-                            </li>
-                            <li class="{% if request.resolver_match.url_name == 'form2b' %}active{% endif %}">
                                 <a href="{% url 'campaign_data:report_new_pmc' %}">Report New PMC</a>
                             </li>
+                            {% endif %}
+                            {% endif %}
+                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12" %}
+                            <li class="{% if request.resolver_match.url_name == 'form2b' %}active{% endif %}">
+                                <a href="{% url 'campaign_data:reports_smc' %}">SMC Linelist Report</a>
+                            </li>
+                            {% endif %}
+
 
                             {% if user_info.usertype|in_list:"5" %}
                             <li class="{% if request.resolver_match.url_name == 'form2b' %}active{% endif %}">
                                 <a href="#">SMC Linelist Report</a>
                             </li>
-                            {% endif %}
+
                             {% endif %}
                         </ul>
                     </li>
@@ -411,7 +418,7 @@
                                 class="fa fa-caret-down"></i></a>
 
                         <ul class="dropdown-menu">
-                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 6" %}
+                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 6, 11, 12" %}
                             <li class="{% if request.resolver_match.app_name == 'zero_dashboard' and request.resolver_match.url_name == 'index' %}active{% endif %}">
                                 <a href="#">Dashboard</a>
                             </li>
@@ -423,7 +430,7 @@
                             </li>
                             {% endif %}
 
-                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 5, 6, 7, 8, 9" %}
+                            {% if user_info.usertype|in_list:"1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12" %}
                             <li class="{% if request.resolver_match.app_name == 'zerodose' and request.resolver_match.url_name == 'listing' %}active{% endif %}">
                                 <a href="#">Zero Dose Lists</a>
                             </li>
@@ -433,12 +440,12 @@
 
                     <li role="presentation"
                         class="dropdown {% if request.resolver_match.app_name == 'campaign' %}active{% endif %}">
-                        {% if user_info.usertype|in_list:"1, 2" %}
+                        {% if user_info.usertype|in_list:"1" %}
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false"><i class="fa fa-file-text"></i> Campaigns <i
                                 class="fa fa-caret-down"></i></a>
                         <ul class="dropdown-menu">
-                            {% if user_info.usertype|in_list:"1, 2" %}
+                            {% if user_info.usertype|in_list:"1" %}
                             <li class="{% if request.resolver_match.app_name == 'campaign' and request.resolver_match.url_name == 'index' %}active{% endif %}">
                                 <a href="{% url 'campaign_planning:planning' %}">All Campaigns</a>
                             </li>
@@ -468,7 +475,7 @@
                     {% endif %}
 
                     <!-- <li role="presentation"><a href="#">PMC Dashboard</a></li> -->
-                    {% if user_info.usertype|in_list:"1, 2, 3" or user_info.is_pmc == 1 %}
+                    {% if user_info.usertype|in_list:"1" or user_info.is_pmc == 1 %}
 
                     <li role="presentation"
                         class="dropdown {% if request.resolver_match.app_name == 'pmc' or request.resolver_match.app_name == 'reports' and request.resolver_match.url_name == 'pmcreports' %}active{% endif %}">
@@ -479,7 +486,7 @@
                             <li class="{% if request.resolver_match.app_name == 'pmc' and request.resolver_match.url_name == 'index' %}active{% endif %}">
                                 <a href="#">Dashboard</a>
                             </li>
-                            {% if user_info.usertype|in_list:"1, 2, 3" %}
+                            {% if user_info.usertype|in_list:"1" %}
                             <li class="{% if request.resolver_match.app_name == 'pmc' and request.resolver_match.url_name == 'auto' %}active{% endif %}">
                                 <a href="#">Auto PMC</a>
                             </li>
@@ -490,7 +497,7 @@
                             <li class="{% if request.resolver_match.app_name == 'reports' and request.resolver_match.url_name == 'pmcreports' %}active{% endif %}">
                                 <a href="#">PMC Reports</a>
                             </li>
-                            {% if user_info.usertype|in_list:"1, 2, 3" %}
+                            {% if user_info.usertype|in_list:"1" %}
                             <li class="{% if request.resolver_match.app_name == 'pmc' and request.resolver_match.url_name == 'linked' %}active{% endif %}">
                                 <a href="#">PMC Linked</a>
                             </li>

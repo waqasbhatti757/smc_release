@@ -8,8 +8,8 @@
     <div>
         <h1 class="flex flex-row flex-nowrap items-center my-6">
             <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
-            <span class="flex-none block mx-2 px-2 py-2 text-4xl font-medium uppercase bg-black text-white">
-        SMC FORM FOLLOWUP STATUS
+            <span class="flex-none block mx-2 px-2 py-2 text-4xl font-medium capitalize bg-green-600 text-white">
+        SMC Form Followup Stats
     </span>
             <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
         </h1>
@@ -169,11 +169,39 @@
     <div>
         <h1 class="flex flex-row flex-nowrap items-center my-6">
             <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
-            <span class="flex-none block mx-2 px-2 py-2 text-2xl font-medium uppercase bg-black text-white">
-        SMC RECORDED CHILDREN LINELIST
+            <span class="flex-none block mx-2 px-2 py-2 text-2xl font-medium capitalize bg-green-600 text-white">
+        SMC Record Children Line List
     </span>
             <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
         </h1>
+    </div>
+    <div class="grid grid-cols-12 gap-4 items-center mt-4">
+        <!-- Search box (col-span-6) -->
+        <div class="col-span-12 md:col-span-6 flex justify-start">
+            <div class="col-span-12 md:col-span-3 pb-3 flex justify-start">
+                <div class="relative"> <!-- fixed width instead of full -->
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <!-- Search Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="h-5 w-5"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"/>
+                </svg>
+            </span>
+                    <input
+                        type="text"
+                        id="tableSearch"
+                        placeholder="Search..."
+                        class="pl-10 pr-4 py-3 pb-6 w-full md:w-96 lg:w-[300px] rounded-full border border-gray-300 shadow-sm
+                               focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md
+                               transition duration-200 text-base"
+                    />
+                </div>
+            </div>
+        </div>
     </div>
     <form id="updatevaccinationstatus" action="/submit" method="POST" class="space-y-6">
     <div class="overflow-x-auto">
@@ -196,11 +224,45 @@
                 <th class="px-3 py-2 text-left">Date Covered</th>
             </tr>
             </thead>
-            <tbody id="childrenTableBody" class="divide-y divide-gray-200 text-base text-gray-800">
+            <tbody id="childrenTableBody" class="divide-y divide-gray-200 text-base text-gray-800" id="tableBody">
             </tbody>
         </table>
     </div>
+    <div class="col-span-12 md:col-span-6 flex justify-end items-center space-x-2" id="paginationControls">
+                <button
+                        id="prevPage"
+                        class="flex items-center px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+                >
+                    <!-- Left Arrow Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-4 w-4 mr-1"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Prev
+                </button>
 
+                <span id="pageInfo" class="text-gray-600 font-medium"></span>
+
+                <button
+                        id="nextPage"
+                        class="flex items-center px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+                >
+                    Next
+                    <!-- Right Arrow Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-4 w-4 ml-1"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
     <div class="flex justify-end">
         <button id="submitbuttonvacc"
                 type="submit"
@@ -219,7 +281,6 @@
             Update Data
         </button>
     </div>
-
 </form>
 </div>
 

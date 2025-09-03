@@ -38,7 +38,7 @@
                                 {% include "partial_template/user_form.html" %}
                                 <div class="flex justify-center relative w-full pt-4 col-span-12 md:col-span-12 flex items-center justify-center">
                                     <button
-                                            type="submit"
+                                            type="submit" id="submitbuttonenableornot"
                                             class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 px-6 py-3 text-white font-semibold shadow-md transition-all duration-300 ease-in-out hover:from-green-500 hover:via-green-600 hover:to-emerald-700 hover:shadow-lg active:scale-95 dark:from-green-700 dark:via-green-800 dark:to-green-900"
                                     >
                                         Update User
@@ -121,12 +121,32 @@
     }
 
 </script>
+<script>
+    document.getElementById('password').removeAttribute('required');
+    document.getElementById('repeatpassword').removeAttribute('required');
+
+</script>
 {% include "partial_js_func/edit_user_profile.js" %}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.getElementById("update_user_profile").addEventListener("submit", async function (e) {
         e.preventDefault();
+        const pwd = document.getElementById('password').value.trim();
+        const repeatPwd = document.getElementById('repeatpassword').value.trim();
+
+        // If user typed anything in password
+        if (pwd.length > 0) {
+        // Check repeat password exists and matches
+        if (repeatPwd.length === 0 || pwd !== repeatPwd) {
+          e.preventDefault(); // stop form submission
+          toastr.error('Both password and repeat password must be filled and match.');
+          // optionally focus on repeat password
+          document.getElementById('repeatpassword').focus();
+          return false;
+        }
+        }
+
         const user_infos = JSON.parse(`{{profile_user_info | safe | escapejs}}`);
         const form = e.target;
         const formData = new FormData(form);
@@ -151,7 +171,11 @@
                     text: 'User created successfully!',
                     timer: 2500,
                     timerProgressBar: true,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    willClose: () => {
+                        // Close the page
+                        window.close();
+                    }
                 });
 
                 form.reset(); // Clear form on success

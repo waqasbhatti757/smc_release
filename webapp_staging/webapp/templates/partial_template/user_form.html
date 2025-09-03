@@ -362,14 +362,14 @@
             </div>
         </div>
     </div>
-    <div x-data="{ showHint: false }" class="col-span-12 md:col-span-2">
+    <div x-data="{ showHint: false }" class="col-span-12 md:col-span-2 hidden">
         <div class="relative">
             <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
                 CNIC #. <span class="text-red-600">*</span>
             </label>
 
             <input
-                    type="text" required
+                    type="text"
                     id="cnic" name="cnic"
                     class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[12px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
                     placeholder="e.g. 42101-1234567-1" autocomplete="off" maxlength="15"
@@ -393,7 +393,7 @@
             </div>
         </div>
     </div>
-    <div class="col-span-12 md:col-span-1" x-data="{ showHint: false }">
+    <div class="col-span-12 md:col-span-1 hidden" x-data="{ showHint: false }">
 
         <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
             CNIC Expiry <span class="text-red-600">*</span>
@@ -405,7 +405,7 @@
                 name="dob"
                 placeholder="DD-MM-YYYY"
                 class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 text-[10px] text-gray-800 placeholder-gray-400 shadow-md focus:border-blue-500 focus:ring-2 focus:ring-blue-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:ring-green-800"
-                autocomplete="off" required
+                autocomplete="off"
         />
 
     </div>
@@ -416,7 +416,7 @@
             </label>
 
             <input
-                    id="contactnumber" name="contactnumber" type="text" required
+                    id="contactnumber" name="contactnumber" type="text"
                     class="h-16 w-full max-w-3xl rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 placeholder-gray-400 shadow-md transition-all ease-in-out focus:border-green-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white dark:placeholder-white/30 dark:focus:border-green-400 dark:focus:bg-green-800 dark:focus:ring-green-800 normal-case"
                     placeholder="03XX-XXXXXXX" autocomplete="off"
                     autocapitalize="off" maxlength="12"
@@ -623,7 +623,7 @@
                     Division <span class="text-red-600">*</span>
                 </label>
 
-                <select id="divisionname" name="divisionname"
+                <select id="divisionname" required name="divisionname"
                         class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
                         @change="divisionSelected = $event.target.value !== ''"
                 >

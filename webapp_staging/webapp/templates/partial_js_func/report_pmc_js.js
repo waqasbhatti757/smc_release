@@ -151,12 +151,15 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
 }
 
-    const response = await fetch(`${window.API_BASE_URL}/campaign/campaigns/list`, {
+    const response = await fetch(`${window.API_BASE_URL}/campaign/campaigns/pmc/list`, {
     headers: {'accept': 'application/json'}
 });
 
     const data = await response.json();
     const select = document.getElementById('campaign');
+    const title = data.title;
+    const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+    document.getElementById("updatemypmccampaignstatus").textContent = "Mark PMC For " + formattedTitle;
 
     // clear existing options
     select.innerHTML = "";
@@ -470,8 +473,9 @@ editSmcForm.addEventListener("submit", async (e) => {
                       <td class="px-4 py-3">${child.username}</td>
                       <td class="px-4 py-3">${child.entered_date}</td>
                       <td class="px-4 py-3">${child.previous_reported_pmc}</td>
-                      <td class="px-4 py-3">${child.report_pmc_for}</td>
-                      <td class="px-4 py-3">${child.already_pmc}</td>
+                      <td class="px-4 py-3">
+                         ${child.already_pmc ? "PMC" : "SMC"}
+                      </td>
                       <td class="px-4 py-3">
                         <input type="hidden" name="child[${child.id_child}][age]" value="${child.id_child}">
                         <input type="hidden" name="child[${child.id_child}][ucid]" value="${json.data.geo_information.uc.id}">
@@ -496,6 +500,86 @@ editSmcForm.addEventListener("submit", async (e) => {
         tableBody.innerHTML = `<tr><td colspan="13" class="text-center py-4 text-red-600">Error loading data</td></tr>`;
     }
 });
+const searchInput = document.getElementById("tableSearch");
+const paginationControls = document.getElementById("paginationControls");
+const prevBtn = document.getElementById("prevPage");
+const nextBtn = document.getElementById("nextPage");
+const pageInfo = document.getElementById("pageInfo");
+
+let currentPage = 1;
+let rowsPerPage = 5; // page size
+
+function paginateTable() {
+  const rows = Array.from(tableBody.querySelectorAll("tr"));
+  const filter = (searchInput?.value || "").toLowerCase();
+
+  // filter rows
+  const filteredRows = filter
+    ? rows.filter(row => row.innerText.toLowerCase().includes(filter))
+    : rows;
+
+  // compute pages
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+
+  // clamp current page
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  // hide all rows
+  rows.forEach(row => (row.style.display = "none"));
+
+  // show only current slice
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  filteredRows.slice(start, end).forEach(row => (row.style.display = ""));
+
+  // update UI
+  pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  prevBtn.disabled = currentPage === 1 || filteredRows.length === 0;
+  nextBtn.disabled = currentPage === totalPages || filteredRows.length === 0;
+}
+
+// call this AFTER you finish building table rows from fetch
+function applyInitialPagination() {
+  currentPage = 1;
+  paginateTable();
+}
+
+// Events
+searchInput.addEventListener("input", () => {
+  currentPage = 1;
+  paginateTable();
+});
+
+prevBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    paginateTable();
+  }
+});
+
+nextBtn.addEventListener("click", () => {
+  // guard against jumping past last page on a cold start
+  const rows = Array.from(tableBody.querySelectorAll("tr"));
+  const filter = (searchInput?.value || "").toLowerCase();
+  const filteredCount = filter ? rows.filter(r => r.innerText.toLowerCase().includes(filter)).length : rows.length;
+  const totalPages = Math.max(1, Math.ceil(filteredCount / rowsPerPage));
+  if (currentPage < totalPages) {
+    currentPage++;
+    paginateTable();
+  }
+});
+
+const observer = new MutationObserver(() => {
+  // When new rows are appended/replaced, reset to page 1 and paginate
+  applyInitialPagination();
+});
+observer.observe(tableBody, { childList: true });
+
+if (tableBody.querySelector("tr")) {
+  applyInitialPagination();
+}
+
 </script>
 
 <script>

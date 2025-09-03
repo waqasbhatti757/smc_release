@@ -14,6 +14,10 @@ FASTAPI_BASE_URL = os.getenv("FAST_API_URL")
 
 
 async def sync_planning(request):
+    user_info = await sync_to_async(request.session.get)('user_info')
+    if user_info.get("is_first_time_login") == 1:
+        return await sync_to_async(redirect)('dashboard:user_dashboard')
+
     jwt_token = await sync_to_async(lambda: request.session.get("jwt_token"))()
     async with httpx.AsyncClient() as client:
         resp = await client.get(f"{FASTAPI_BASE_URL}/campaign/campaigns/summary")
@@ -25,6 +29,10 @@ async def sync_planning(request):
         {"summary": data,"jwt_token": jwt_token}
     )
 async def campaign_planning(request):
+    user_info = await sync_to_async(request.session.get)('user_info')
+    if user_info.get("is_first_time_login") == 1:
+        return await sync_to_async(redirect)('dashboard:user_dashboard')
+    
     if request.method == "POST":
         try:
             payload = json.loads(request.body.decode("utf-8"))

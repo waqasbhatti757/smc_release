@@ -15,7 +15,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     function attachLitepickers() {
@@ -28,8 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 format: "DD-MM-YYYY",
                 autoApply: true,
                 allowRepick: true,
+                minDate: new Date(), // TODAY or future dates only
                 dropdowns: {
-                    minYear: 2024,
+                    minYear: new Date().getFullYear(),
                     maxYear: 2050,
                     months: true,
                     years: true,
@@ -477,6 +477,85 @@ editSmcForm.addEventListener("submit", async (e) => {
         tableBody.innerHTML = `<tr><td colspan="13" class="text-center py-4 text-red-600">Error loading data</td></tr>`;
     }
 });
+    const searchInput = document.getElementById("tableSearch");
+const paginationControls = document.getElementById("paginationControls");
+const prevBtn = document.getElementById("prevPage");
+const nextBtn = document.getElementById("nextPage");
+const pageInfo = document.getElementById("pageInfo");
+
+let currentPage = 1;
+let rowsPerPage = 5; // page size
+
+function paginateTable() {
+  const rows = Array.from(tableBody.querySelectorAll("tr"));
+  const filter = (searchInput?.value || "").toLowerCase();
+
+  // filter rows
+  const filteredRows = filter
+    ? rows.filter(row => row.innerText.toLowerCase().includes(filter))
+    : rows;
+
+  // compute pages
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+
+  // clamp current page
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  // hide all rows
+  rows.forEach(row => (row.style.display = "none"));
+
+  // show only current slice
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  filteredRows.slice(start, end).forEach(row => (row.style.display = ""));
+
+  // update UI
+  pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  prevBtn.disabled = currentPage === 1 || filteredRows.length === 0;
+  nextBtn.disabled = currentPage === totalPages || filteredRows.length === 0;
+}
+
+// call this AFTER you finish building table rows from fetch
+function applyInitialPagination() {
+  currentPage = 1;
+  paginateTable();
+}
+
+// Events
+searchInput.addEventListener("input", () => {
+  currentPage = 1;
+  paginateTable();
+});
+
+prevBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    paginateTable();
+  }
+});
+
+nextBtn.addEventListener("click", () => {
+  // guard against jumping past last page on a cold start
+  const rows = Array.from(tableBody.querySelectorAll("tr"));
+  const filter = (searchInput?.value || "").toLowerCase();
+  const filteredCount = filter ? rows.filter(r => r.innerText.toLowerCase().includes(filter)).length : rows.length;
+  const totalPages = Math.max(1, Math.ceil(filteredCount / rowsPerPage));
+  if (currentPage < totalPages) {
+    currentPage++;
+    paginateTable();
+  }
+});
+
+const observer = new MutationObserver(() => {
+  // When new rows are appended/replaced, reset to page 1 and paginate
+  applyInitialPagination();
+});
+observer.observe(tableBody, { childList: true });
+
+if (tableBody.querySelector("tr")) {
+  applyInitialPagination();
+}
 </script>
 
 <script>
@@ -527,15 +606,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     icon: "success",
                     title: "Updated!",
                     text: json.message,
+                    showConfirmButton: false,
                     confirmButtonColor: "#3085d6",
-                    confirmButtonText: "OK"
+                    timer: 1500,          // Auto close after 1500ms
+                    timerProgressBar: true
+
                 });
             } else {
                 Swal.fire({
                     icon: "error",
                     title: "Failed",
                     text: json.message || "Something went wrong",
-                    confirmButtonColor: "#d33"
+                    showConfirmButton: false,
+                    confirmButtonColor: "#3085d6",
+                    timer: 1500,          // Auto close after 1500ms
+                    timerProgressBar: true
+
                 });
             }
         } catch (error) {
@@ -544,7 +630,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon: "error",
                 title: "Error",
                 text: "Unable to update vaccination dates.",
-                confirmButtonColor: "#d33"
+                confirmButtonColor: "#d33",
+                showConfirmButton: false,
+            confirmButtonColor: "#3085d6",
+            timer: 1500,          // Auto close after 1500ms
+            timerProgressBar: true
+
             });
         } finally {
             submitBtn.disabled = false;

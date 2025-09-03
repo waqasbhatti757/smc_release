@@ -493,7 +493,6 @@ function loadTehsilsByDistrict(districtId) {
         .catch(err => console.error("Failed to load tehsils:", err));
 }
 </script>
-
 <script>
     const userType = parseInt(rawGeoData.usertype);
 
@@ -577,7 +576,6 @@ function loadTehsilsByDistrict(districtId) {
 
 });
 </script>
-
 
 <script>
     function ucDropdownComponent() {
@@ -703,8 +701,6 @@ function loadTehsilsByDistrict(districtId) {
 });
 </script>
 
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const user_infos = JSON.parse(`{{ profile_user_info | safe | escapejs }}`);
@@ -767,8 +763,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const user_infos = JSON.parse(`{{ profile_user_info | safe | escapejs }}`);
@@ -796,90 +790,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const inputs = [document.getElementById("firstname"), document.getElementById("lastname")];
+    window.validationStates = {
+    username: false,
+    email: false,
+    firstname: false,
+    lastname: false,
 
-    toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "timeOut": "3000",
-    "extendedTimeOut": "1000",
-    "positionClass": "toast-top-right"
-};
-
-    const blacklist = ["admin", "test", "user", "root", "system"];
-
-    inputs.forEach((input) => {
-    input.addEventListener("blur", function () {
-    const value = input.value.trim();
-
-    const hasLetters = /[a-zA-Z]/.test(value);
-    const hasDigits = /\d/.test(value);
-    const isMixedAlphanumeric = hasLetters && hasDigits;
-    const hasSpecialChars = /[^a-zA-Z0-9]/.test(value);
-    const isOnlyDigits = /^\d+$/.test(value);
-    const isTooShort = value.length < 3;
-    const hasTripleRepeat = /(.)\1\1/i.test(value);
-    const hasWhitespace = /\s/.test(value);
-    const startsWithLetter = /^[a-zA-Z]/.test(value);
-    const isEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    const isBlacklisted = blacklist.includes(value.toLowerCase());
-    const isAsciiOnly = /^[\x00-\x7F]*$/.test(value);
-
-    let error = "";
-
-    if (!isAsciiOnly) {
-    error = "Only English (ASCII) characters are allowed.";
-} else if (isBlacklisted) {
-    error = "This name is not allowed.";
-} else if (isEmailFormat) {
-    error = "Name cannot be an email address.";
-} else if (!startsWithLetter) {
-    error = "Name must start with a letter.";
-} else if (isTooShort) {
-    error = "Name must be at least 3 characters long.";
-} else if (hasTripleRepeat) {
-    error = "Name must not contain the same character three times in a row.";
-} else if (isOnlyDigits) {
-    error = "Name cannot be only digits.";
-} else if (hasSpecialChars) {
-    error = "Special characters are not allowed.";
-} else if (isMixedAlphanumeric) {
-    error = "Name must not be a mix of letters and numbers (e.g., Afeef123).";
-}
-
-    if (error) {
-    toastr.error(error, "First and Last Name Issues");
-
-    input.classList.remove("border-gray-300");
-    input.classList.add("border-red-500", "focus:ring-red-300");
-
-    setTimeout(() => {
-    input.classList.remove("border-red-500", "focus:ring-red-300");
-    input.classList.add("border-gray-300");
-}, 3000);
-}
-});
-});
-});
+  };
 </script>
 <script>
-    function toggleSubmitButton(value) {
+function toggleSubmitButton() {
     const btn = document.querySelector('button[type="submit"]');
-    if (value === 1) {
-    btn.style.display = 'none';
-} else {
-    btn.style.display = 'inline-block'; // or '' to revert to default
-}
-}
+    console.log("afeef");
+    // Check if all fields in validationState are valid
+    const allValid = Object.values(window.validationStates).every(v => v === true);
 
+    if (allValid) {
+        // Enable button
+        btn.disabled = false;
+        btn.style.removeProperty('background-color');
+        btn.style.removeProperty('background-image');
+        btn.style.removeProperty('border-color');
+        btn.style.removeProperty('cursor');
+    } else {
+        // Disable button
+        btn.disabled = true;
+        btn.style.setProperty('background-color', 'gray', 'important');
+        btn.style.setProperty('background-image', 'none', 'important');
+        btn.style.setProperty('border-color', 'gray', 'important');
+        btn.style.setProperty('cursor', 'not-allowed', 'important');
+    }
+}
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const usernameInput = document.getElementById("username");
-
+    toggleSubmitButton();
     toastr.options = {
     "closeButton": true,
     "progressBar": true,
@@ -910,48 +858,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!value) {
     error = "Username is required.";
-    toggleSubmitButton(1);
+        window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (!isAscii) {
     error = "Username must contain only English (ASCII) characters.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (hasMixedCase) {
     error = "Username must be all lowercase.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (hasWhitespace) {
     error = "Username must not contain spaces.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (hasInvalidSpecials) {
     error = "Only '_' and '.' are allowed as special characters.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (hasConsecutiveSpecials) {
     error = "Do not use consecutive special characters like '__' or '..'.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
 } else if (endsWithSpecial) {
     error = "Username cannot end with '_' or '.'";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (hasTripleRepeat) {
     error = "Username cannot have the same character three times in a row.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (!startsWithLetter) {
     error = "Username must start with a letter.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (isTooShort) {
     error = "Username must be at least 5 characters.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (isTooLong) {
     error = "Username cannot be more than 20 characters.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (onlyDigits) {
     error = "Username cannot be only numbers.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 } else if (!hasLetters) {
     error = "Username must contain at least one letter.";
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 }
 
     if (error) {
     toastr.error(error, "Username Issues");
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
     markInputInvalid();
     return;
 }
@@ -970,7 +945,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (geoResult.verified === true) {
     toastr.error("Username contains a possible geo code or location.", "Naming Restriction");
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
     markInputInvalid();
     return;
 }
@@ -987,17 +963,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const userResult = await userResponse.json();
     if (userResult.already_exists === true && value != user_infos.username) {
     toastr.error("Username already exists. Please choose another.", "Already Taken");
-    toggleSubmitButton(1);
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
     markInputInvalid();
     return;
 }
 
     toastr.success("Username is available and valid!", "Success");
-    toggleSubmitButton(0);
+    window.validationStates.username = true;
+    toggleSubmitButton();
+
 
 } catch (err) {
     console.error("Validation error:", err);
-    toastr.error("An error occurred during validation. Try again later.");
+    window.validationStates.username = false;
+    toggleSubmitButton();
+
 }
 
     function markInputInvalid() {
@@ -1012,11 +994,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 });
 </script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const emailInput = document.getElementById("email");
-
+    toggleSubmitButton();
     toastr.options = {
     "closeButton": true,
     "progressBar": true,
@@ -1049,40 +1030,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!value) {
     error = "Email is required.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (!isAscii) {
     error = "Only English (ASCII) characters are allowed.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (!isValidFormat) {
     error = "Email format is invalid.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (!hasOnlyAllowedSpecials) {
     error = "Only '_', '.' and alphanumeric characters are allowed before '@'.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (hasDoubleSpecials) {
     error = "Do not use '__' or '..' in the username.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (startsInvalid) {
     error = "Email must start with a letter.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (onlyDigitsBeforeAt) {
     error = "Email cannot have only numbers before '@'.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (localTooShort) {
     error = "Email username must be at least 4 characters.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 
 } else if (localTooLong) {
     error = "Email username must be at most 20 characters.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 } else if (hasTripleRepeat) {
     error = "Email username cannot contain 3 repeated characters (e.g., aaa, 111).";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 } else if (domainTooShort) {
     error = "Domain must be at least 2 characters before '.com'";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 } else if (domainBlacklisted) {
     error = "Email domain is not allowed.";
+    window.validationStates.email = false;
+    toggleSubmitButton();
 }
 
     if (error) {
     toastr.error(error, "Email Issues");
+    window.validationStates.email = false;
+    toggleSubmitButton();
     markInputInvalid();
     return;
 }
@@ -1101,6 +1108,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (geoResult.verified === true) {
     toastr.error("Email username contains a possible geo/location code.", "Naming Restriction");
+    window.validationStates.email = false;
+    toggleSubmitButton();
     markInputInvalid();
     return;
 }
@@ -1115,14 +1124,43 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
     const existsResult = await existsResponse.json();
+    const currentUrl = window.location.href;
+    if (existsResult.already_exists === true) {
+        if (currentUrl.includes("create_user")) {
+            console.log("awefasdfsadfsdaf");
+            // Condition when creating a user
+            if (value === window.user_info.email) {
+                toastr.error("This email is already registered.", "Already In Use");
+                markInputInvalid();
+                window.validationStates.email = false;
+                toggleSubmitButton();
+                return;
+            }
+            else {
+                toastr.error("This email is already registered.", "Already In Use");
+                markInputInvalid();
+                window.validationStates.email = false;
+                toggleSubmitButton();
+                return;
+            }
 
-    if (existsResult.already_exists === true && value != user_infos.email) {
-    toastr.error("This email is already registered.", "Already In Use");
-    markInputInvalid();
-    return;
-}
+
+        } else {
+            // Condition when updating/editing a user
+            if (value !== user_info.email) {
+                toastr.error("This email is already registered.", "Already In Use");
+                window.validationStates.email = false;
+                toggleSubmitButton();
+                markInputInvalid();
+                return;
+            }
+        }
+    }
 
     toastr.success("Email is valid and available!", "Success");
+    window.validationStates.email = true;
+    toggleSubmitButton();
+
 
 } catch (err) {
     console.error("Email validation failed:", err);
@@ -1141,15 +1179,113 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const inputs = [document.getElementById("firstname"), document.getElementById("lastname")];
+    toggleSubmitButton();
+    toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "timeOut": "3000",
+    "extendedTimeOut": "1000",
+    "positionClass": "toast-top-right"
+};
 
+    const blacklist = ["admin", "test", "user", "root", "system"];
 
+    inputs.forEach((input) => {
+    input.addEventListener("blur", function () {
+    const value = input.value.trim();
+
+    const hasLetters = /[a-zA-Z]/.test(value);
+    const hasDigits = /\d/.test(value);
+    const isMixedAlphanumeric = hasLetters && hasDigits;
+    const hasSpecialChars = /[^a-zA-Z0-9]/.test(value);
+    const isOnlyDigits = /^\d+$/.test(value);
+    const isTooShort = value.length < 3;
+    const hasTripleRepeat = /(.)\1\1/i.test(value);
+    const hasWhitespace = /\s/.test(value);
+    const startsWithLetter = /^[a-zA-Z]/.test(value);
+    const isEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    const isBlacklisted = blacklist.includes(value.toLowerCase());
+    const isAsciiOnly = /^[\x00-\x7F]*$/.test(value);
+
+    let error = "";
+
+    if (!isAsciiOnly) {
+    error = "Only English (ASCII) characters are allowed.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (isBlacklisted) {
+    error = "This name is not allowed.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (isEmailFormat) {
+    error = "Name cannot be an email address.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (!startsWithLetter) {
+    error = "Name must start with a letter.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (isTooShort) {
+    error = "Name must be at least 3 characters long.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (hasTripleRepeat) {
+    error = "Name must not contain the same character three times in a row.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (isOnlyDigits) {
+    error = "Name cannot be only digits.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (hasSpecialChars) {
+    error = "Special characters are not allowed.";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+} else if (isMixedAlphanumeric) {
+    error = "Name must not be a mix of letters and numbers (e.g., Afeef123).";
+    window.validationStates.firstname=false;
+    window.validationStates.lastname=false;
+    toggleSubmitButton();
+}
+
+    if (error) {
+    toastr.error(error, "First and Last Name Issues");
+    window.validationStates.firstname = false;
+    window.validationStates.lastname = false;
+    toggleSubmitButton();
+    input.classList.remove("border-gray-300");
+    input.classList.add("border-red-500", "focus:ring-red-300");
+
+    setTimeout(() => {
+    input.classList.remove("border-red-500", "focus:ring-red-300");
+    input.classList.add("border-gray-300");
+}, 3000);
+}else {
+                // Set validation state to true when input is valid
+    window.validationStates.firstname = true;
+    window.validationStates.lastname = true;
+    toggleSubmitButton();
+}
+});
+});
+});
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const passwordInput = document.getElementById("password");
     const repeatInput = document.getElementById("repeatpassword");
-    passwordInput.removeAttribute("required");
-    repeatInput.removeAttribute("required");
-
+    toggleSubmitButton();
     toastr.options = {
     "closeButton": true,
     "progressBar": true,
@@ -1161,30 +1297,59 @@ document.addEventListener('DOMContentLoaded', () => {
     function validatePassword(pwd) {
     const errors = [];
 
-
+    if (!pwd) {
+    errors.push("Password is required.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
+}
     if (pwd.length < 8 || pwd.length > 32) {
     errors.push("Password must be between 8 and 32 characters.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
     if (!/[A-Z]/.test(pwd)) {
     errors.push("At least 1 uppercase letter required.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
     if ((pwd.match(/[a-z]/g) || []).length < 2) {
     errors.push("At least 2 lowercase letters required.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
     if (!/[0-9]/.test(pwd)) {
     errors.push("At least 1 digit required.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
     if (!/[!@#$%^&*(),.?":{}|<>_\-+=]/.test(pwd)) {
     errors.push("At least 1 special character required.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
     if (/(.)\1\1/.test(pwd)) {
     errors.push("No 3 repeated characters allowed.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
     if (/\s/.test(pwd)) {
     errors.push("No spaces allowed.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
     if (!/^[\x20-\x7E]+$/.test(pwd)) {
     errors.push("Only printable ASCII characters allowed.");
+    window.validationStates.password = false;
+    window.validationStates.repeatPassword = false;
+    toggleSubmitButton();
 }
 
     return errors;
@@ -1192,7 +1357,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showError(inputElement, message) {
     toastr.error(message, "Password Error");
-
     inputElement.classList.remove("border-gray-300");
     inputElement.classList.add("border-red-500", "focus:ring-red-300");
 
@@ -1206,18 +1370,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const errors = validatePassword(passwordInput.value);
 
     if (errors.length > 0) {
-    showError(passwordInput, errors[0]); // Show first error only
-}
+        showError(passwordInput, errors[0]); // Show first error only
+    }
+    else {
+            window.validationStates.password = true;
+            window.validationStates.repeatPassword = true; // enable submit
+            toggleSubmitButton();
+        }
 });
 
     repeatInput.addEventListener("blur", () => {
     if (repeatInput.value !== passwordInput.value) {
-    showError(repeatInput, "Both Passwords do not match.");
-}
+        showError(repeatInput, "Both Passwords do not match.");
+        window.validationStates.password = false;
+        window.validationStates.repeatPassword = false;
+        toggleSubmitButton();
+    }
+    else {
+            window.validationStates.password = true;
+            window.validationStates.repeatPassword = true; // enable submit
+            toggleSubmitButton();
+
+        }
 });
 });
 </script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const cnicInput = document.getElementById("cnic");
@@ -1284,11 +1461,10 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 });
 </script>
-
 <script>
+
     document.addEventListener("DOMContentLoaded", function () {
     const contactInput = document.getElementById("contactnumber");
-
     toastr.options = {
     "closeButton": true,
     "progressBar": true,
@@ -1297,6 +1473,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "positionClass": "toast-top-right"
 };
 
+    toggleSubmitButton();
     contactInput.addEventListener("input", function () {
     let value = contactInput.value.replace(/\D/g, ''); // Only digits
     if (value.length > 11) value = value.slice(0, 11); // Limit to 11 digits
@@ -1315,7 +1492,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (error) {
     toastr.error(error, "Contact Number Issue");
-
+    window.validationStates.contactnumber = false;
+    toggleSubmitButton();
     contactInput.classList.remove("border-gray-300");
     contactInput.classList.add("border-red-500", "focus:ring-red-300");
 
@@ -1329,8 +1507,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function validatePakPhone(phone) {
     const clean = phone.replace(/\D/g, '');
 
-    if (clean.length !== 11) {
+    if (clean.length !== 11 && clean.length > 0) {
+    window.validationStates.contactnumber = false;
+    toggleSubmitButton();
     return "Phone number must be exactly 11 digits.";
+}
+    else {
+        window.validationStates.contactnumber = true;
+        toggleSubmitButton();
+        return "";
 }
 
     const validPrefixes = [
@@ -1346,22 +1531,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const last7 = clean.slice(4);
 
     if (!validPrefixes.includes(prefix)) {
+        window.validationStates.contactnumber = false;
+        toggleSubmitButton();
     return `Invalid prefix (${prefix}). Must be a valid mobile network code.`;
 }
 
     if (/^0{7}$/.test(last7)) {
+        window.validationStates.contactnumber = false;
+        toggleSubmitButton();
     return "Phone number cannot have all zeroes after prefix.";
 }
 
     if (/^(\d)\1{6}$/.test(last7)) {
+        window.validationStates.contactnumber = false;
+        toggleSubmitButton();
     return "Phone number cannot have the same digit repeated 7 times.";
 }
 
     if (isSequential(last7)) {
+        window.validationStates.contactnumber = false;
+        toggleSubmitButton();
     return "Phone number cannot have sequential digits like 1234567.";
 }
-
+    window.validationStates.contactnumber = true;
+    toggleSubmitButton();
     return ""; // Valid
+
+
 }
 
     function isSequential(num) {
@@ -1371,7 +1567,6 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 });
 </script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 <script>
@@ -1403,7 +1598,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 });
 </script>
-
 
 <script>
     function handleAffiliationChange() {

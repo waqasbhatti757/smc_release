@@ -1,4 +1,3 @@
-
 <script>
     let editingTeamId = null; // global variable, tracks Add vs Edit
     let editingChildRecord = null;
@@ -18,34 +17,38 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date(); // Current date
+
     const picker = new Litepicker({
-    element: document.getElementById("date"),
-    format: "DD-MM-YYYY",
-    autoApply: true,
-    allowRepick: true,
-    dropdowns: {
-    minYear: 2024,
-    maxYear: 2050,
-    months: true,
-    years: true,
-},
-    setup: (picker) => {
-    picker.on("show", () => {
-    setTimeout(() => {
-    const panel = document.querySelector(".litepicker");
-    if (panel) {
-    panel.style.borderRadius = "12px";
-    panel.style.padding = "10px";
-    panel.style.fontSize = "13px";
-    panel.style.transition = "all 0.3s ease-in-out";
-}
-}, 10);
-});
-}
-});
+        element: document.getElementById("date"),
+        format: "DD-MM-YYYY",
+        autoApply: true,
+        allowRepick: true,
+        minDate: today, // Only allow today or future dates
+        dropdowns: {
+            minYear: today.getFullYear(), // start from current year
+            maxYear: 2050,
+            months: true,
+            years: true,
+        },
+        setup: (picker) => {
+            picker.on("show", () => {
+                setTimeout(() => {
+                    const panel = document.querySelector(".litepicker");
+                    if (panel) {
+                        panel.style.borderRadius = "12px";
+                        panel.style.padding = "10px";
+                        panel.style.fontSize = "13px";
+                        panel.style.transition = "all 0.3s ease-in-out";
+                    }
+                }, 10);
+            });
+        }
+    });
 });
 </script>
+
 <script defer>
     (async function () {
     window.user_info = null;
@@ -92,113 +95,88 @@
 })();
 </script>
 <script>
-const missedReason = document.getElementById("missedReason");
-const subReason = document.getElementById("subReason");
-
-// Predefined sub reasons
-const optionsMap = {
-  NotAvailable: [
-    { value: "In School", label: "In School" },
-    { value: "Inside District", label: "Inside District" },
-    { value: "Outside District", label: "Outside District" },
-    { value: "Sleeping", label: "Sleeping" }
-  ],
-  Refusal: [
-    { value: "Religious Matter", label: "Religious Matter" },
-    { value: "Misconception", label: "Misconception" },
-    { value: "Safety", label: "Safety" },
-    { value: "Demands", label: "Demands" },
-    { value: "Repeated Campaigns", label: "Repeated Campaigns" },
-    { value: "Direct Refusal", label: "Direct Refusal" },
-    { value: "Sickness", label: "Sickness" },
-    { value: "Silent Refusal", label: "Silent Refusal" }
-  ]
+function openTeamModal() {
+    const modal = document.getElementById('teamModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function closeTeamModal() {
+    const modal = document.getElementById('teamModal');
+    modal.classList.remove('flex');
+    modal.classList.add('hidden');
+}
+</script>
+<script>
+    function updateSubReasonOptions(selectedMissedReason, selectedSubReason) {
+    const subReason = document.getElementById("subReason");
+    const optionsMap = {
+    NotAvailable: [
+    {value: "In School", label: "In School"},
+    {value: "Inside District", label: "Inside District"},
+    {value: "Outside District", label: "Outside District"},
+    {value: "Outside UC", label: "Outside UC"},
+    {value: "Sleeping", label: "Sleeping"}
+    ],
+    Refusal: [
+    {value: "Religious Matter", label: "Religious Matter"},
+    {value: "Misconception", label: "Misconception"},
+    {value: "Safety", label: "Safety"},
+    {value: "Demands", label: "Demands"},
+    {value: "Repeated Campaigns", label: "Repeated Campaigns"},
+    {value: "Direct Refusal", label: "Direct Refusal"},
+    {value: "Sickness", label: "Sickness"},
+    {value: "Silent Refusal", label: "Silent Refusal"}
+    ]
 };
 
-// Handle change
-missedReason.addEventListener("change", function () {
-  const selected = this.value;
-  subReason.innerHTML = '<option value="" disabled selected>Sub Reason</option>';
+    subReason.innerHTML = '<option value="" disabled selected>Sub Reason</option>';
 
-  if (!selected) {
+    if (!selectedMissedReason || selectedMissedReason === "LockedHouse") {
     subReason.disabled = true;
+    handleLocationVisibility(null);
     return;
-  }
+}
 
-  if (selected === "LockedHouse") {
-    subReason.disabled = true; // disable sub reason
-    return;
-  }
-
-  // Load sub reasons dynamically
-  const opts = optionsMap[selected] || [];
-  opts.forEach(o => {
+    const opts = optionsMap[selectedMissedReason] || [];
+    opts.forEach(o => {
     const option = document.createElement("option");
     option.value = o.value;
     option.textContent = o.label;
+    if (o.value === selectedSubReason) {
+    option.selected = true; // preselect if matches current sub reason
+}
     subReason.appendChild(option);
-  });
-
-  subReason.disabled = false; // enable only if options exist
 });
-</script>
-<script>
-    const rowsPerPage2 = 3; // rows per page
-    let currentPage2 = 1;
 
-    const tableBody2 = document.getElementById("tableBody2");
-    let allRows2 = Array.from(tableBody2.getElementsByTagName("tr"));
-    let filteredRows2 = [...allRows2]; // default: show all rows
-
-    function updatePagination2() {
-    const input = document.getElementById("tableSearch2").value.toLowerCase();
-
-    // Filter rows
-    filteredRows2 = allRows2.filter(row =>
-    row.textContent.toLowerCase().includes(input)
-    );
-
-    // Reset page
-    currentPage2 = 1;
-    showPage2(currentPage2);
+    subReason.disabled = opts.length === 0;
+    handleLocationVisibility(selectedSubReason);
 }
 
-    function showPage2(page) {
-    const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-
-    if (page < 1) page = 1;
-    if (page > totalPages) page = totalPages;
-
-    // Hide all first
-    allRows2.forEach(row => row.style.display = "none");
-
-    // Show only relevant slice
-    const start = (page - 1) * rowsPerPage2;
-    const end = start + rowsPerPage2;
-    filteredRows2.slice(start, end).forEach(row => row.style.display = "");
-
-    // Update page indicator
-    document.getElementById("currentPage2").textContent = `${page} / ${totalPages}`;
-    currentPage2 = page;
-}
-
-    function prevPage2() {
-    if (currentPage2 > 1) {
-    showPage2(currentPage2 - 1);
-}
-}
-
-    function nextPage2() {
-    const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-    if (currentPage2 < totalPages) {
-    showPage2(currentPage2 + 1);
-}
-}
-
-    // Initialize when DOM ready
-    document.addEventListener("DOMContentLoaded", () => {
-    showPage2(1);
+    // Also listen for manual changes
+    document.getElementById("missedReason").addEventListener("change", function () {
+    updateSubReasonOptions(this.value, null);
 });
+
+    // Handle location input visibility
+    function handleLocationVisibility(subReasonValue) {
+    const locationContainer = document.getElementById("locationContainer");
+    const locationInput = document.getElementById("location");
+
+    if (subReasonValue === "Outside District" || subReasonValue === "Outside UC") {
+    locationContainer.classList.remove("hidden");
+    locationInput.setAttribute("required", "true");
+} else {
+    locationContainer.classList.add("hidden");
+    locationInput.removeAttribute("required");
+    locationInput.value = "";
+}
+}
+
+    // Call on manual change
+    document.getElementById("subReason").addEventListener("change", function () {
+    handleLocationVisibility(this.value);
+});
+
 </script>
 <script>
     const openBtn = document.getElementById("openModalBtn");
@@ -502,7 +480,7 @@ missedReason.addEventListener("change", function () {
 } catch(err){console.error(err);}
 });
 
-ucSelect.addEventListener("change", async () => {
+    ucSelect.addEventListener("change", async () => {
     const campaignId = parseInt(campaignSelect.value, 10);
     const ucId = parseInt(ucSelect.value, 10);
     const userType = window.user_info?.usertype ?? null;
@@ -529,43 +507,44 @@ ucSelect.addEventListener("change", async () => {
 });
 </script>
 <script>
-const rowsPerPage = 1;
-let currentPage = 1;
-const tableBody = document.getElementById("tableBody");
-const searchInput = document.getElementById("tableSearch");
+    const tableBody = document.getElementById("tableBody");
 
-async function loadTeamData(idheader) {
+    async function loadTeamData(idheader) {
     if (!tableBody) return;
 
     // Clear table
     tableBody.innerHTML = "";
 
     try {
-        const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/teamdata?idheader=${idheader}`, {
-            method: "POST",
-            headers: { "accept": "application/json" }
-        });
-        const data = await response.json();
+    const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/teamdata?idheader=${idheader}`, {
+    method: "POST",
+    headers: {"accept": "application/json"}
+});
+    const data = await response.json();
 
-        if (data.status !== "success" || !data.data || data.data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4">No team members found</td></tr>`;
-        } else {
-            data.data.forEach(team => {
-                const row = document.createElement("tr");
-                row.classList.add("hover:bg-gray-50", "transition-colors", "duration-150");
-                row.innerHTML = `
-                    <td class="px-6 py-4 border-b border-gray-200">${team.idteam}</td>
-                    <td class="px-6 py-4 border-b border-gray-200 font-medium text-gray-900">${team.team_no}</td>
-                    <td class="px-6 py-4 border-b border-gray-200">${team.team_member}</td>
-                    <td class="px-6 py-4 border-b border-gray-200 text-center flex justify-center space-x-2">
-                        <button onclick="openEditModal('${team.idteam}','${team.team_no}','${team.team_member}')"
-                                class="text-blue-600 hover:text-blue-800 px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg flex items-center justify-center transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round">
-                                <path d="M13 21h8"/>
-                                <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
-                            </svg>
+    if (data.status !== "success" || !data.data || data.data.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4">No team members found</td></tr>`;
+} else {
+    data.data.forEach((team,i) => {
+    const row = document.createElement("tr");
+    row.classList.add("hover:bg-gray-50", "transition-colors", "duration-150");
+    row.innerHTML = `
+                    <td class="px-6 py-2 border-b border-gray-200">${i+1}</td>
+                    <td class="px-6 py-2 border-b border-gray-200">${team.idteam}</td>
+                    <td class="px-6 py-2 border-b border-gray-200 font-medium text-gray-900">${team.team_no}</td>
+                    <td class="px-6 py-2 border-b border-gray-200">${team.team_member}</td>
+                    <td class="px-6 py-2 border-b border-gray-200 text-center flex justify-center space-x-2">
+                        <button type="button"
+                                class="edit-btn text-blue-600 hover:text-blue-800 px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg flex items-center justify-center transition"
+                                data-idteam="${team.idteam}"
+                                data-teamno="${team.team_no}"
+                                data-teammember="${team.team_member}">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                               stroke-linejoin="round">
+                            <path d="M13 21h8"/>
+                            <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+                          </svg>
                         </button>
                         <button onclick="deleteTeamMember('${team.idteam}')"
                                 class="text-red-600 hover:text-red-800 px-3 py-2 bg-red-100 hover:bg-red-200 rounded-lg flex items-center justify-center transition">
@@ -580,81 +559,57 @@ async function loadTeamData(idheader) {
                     </td>
                 `;
 
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Save rows for pagination
-        tableBody.filteredRows = Array.from(tableBody.getElementsByTagName("tr"));
-        currentPage = 1;
-        showPage(currentPage);
-
-        // Attach search event inside function so it's auto-handled
-        searchInput.addEventListener("input", () => {
-            const input = searchInput.value.toLowerCase();
-            tableBody.filteredRows = Array.from(tableBody.getElementsByTagName("tr"))
-                .filter(row => row.textContent.toLowerCase().includes(input));
-            currentPage = 1;
-            showPage(currentPage);
-        });
-
-    } catch (err) {
-        console.error("Failed to load team data:", err);
-        tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-600">Error loading data</td></tr>`;
-        tableBody.filteredRows = Array.from(tableBody.getElementsByTagName("tr"));
-        showPage(1);
-    }
+    tableBody.appendChild(row);
+});
 }
 
-function showPage(page) {
-    const rows = tableBody.filteredRows || Array.from(tableBody.getElementsByTagName("tr"));
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
 
-    rows.forEach((row, idx) => row.style.display = (idx >= start && idx < end) ? "" : "none");
-    document.getElementById("currentPage").textContent = page;
+} catch (err) {
+    console.error("Failed to load team data:", err);
+    tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-600">Error loading data</td></tr>`;
+    tableBody.filteredRows = Array.from(tableBody.getElementsByTagName("tr"));
+    showPage(1);
+}
 }
 
-function prevPage() { if (currentPage > 1) { currentPage--; showPage(currentPage); } }
-function nextPage() { const rows = tableBody.filteredRows || Array.from(tableBody.getElementsByTagName("tr")); if (currentPage * rowsPerPage < rows.length) { currentPage++; showPage(currentPage); } }
 </script>
 <script>
-async function loadTeamOptions(idheader) {
+    async function loadTeamOptions(idheader) {
     const select = document.getElementById("setoptions");
 
     // Reset the select box before loading
     select.innerHTML = `<option value="">Choose a Team</option>`;
 
     try {
-        const res = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/setentryheader?idheader=${idheader}`, {
-            method: "POST",
-            headers: { "Accept": "application/json" }
-        });
+    const res = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/setentryheader?idheader=${idheader}`, {
+    method: "POST",
+    headers: {"Accept": "application/json"}
+});
 
-        const data = await res.json();
+    const data = await res.json();
 
-        if (data.status === "success" && data.data.length > 0) {
-            data.data.forEach(team => {
-                const option = document.createElement("option");
-                option.value = team.value;
-                option.textContent = team.label;
-                select.appendChild(option);
-            });
-        } else {
-            // No team members
-            const opt = document.createElement("option");
-        }
-    } catch (err) {
-        console.error("Error loading team options:", err);
-        const opt = document.createElement("option");
-        opt.value = "";
-        opt.textContent = "Error loading teams";
-        select.appendChild(opt);
-    }
+    if (data.status === "success" && data.data.length > 0) {
+    data.data.forEach(team => {
+    const option = document.createElement("option");
+    option.value = team.value;
+    option.textContent = team.label;
+    select.appendChild(option);
+});
+} else {
+    // No team members
+    const opt = document.createElement("option");
+}
+} catch (err) {
+    console.error("Error loading team options:", err);
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Error loading teams";
+    select.appendChild(opt);
+}
 }
 </script>
 <script>
-function toggleElementsById(ids, state) {
+    function toggleElementsById(ids, state) {
     ids.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -673,26 +628,27 @@ function toggleElementsById(ids, state) {
 </script>
 
 <script>
-async function renderFormData(tid) {
+    async function renderFormData(tid) {
     try {
-        const res = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/aicheaderdata?tid=${tid}`, {
-        method: 'POST',
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-        body: ""
-    });
-        const result = await res.json();
-        const record = result.data[0]; // grab first row
-        populateSelect("campaignname", record.idcampaign, record.campaign_name);
-        populateSelect("provincename", record.pid, record.pname);
-        populateSelect("divisionname", record.divid, record.divname);
-        populateSelect("districtname", record.districtid, record.districtname);
-        populateSelect("tehsilname", record.tehsilid, record.tehsilname);
-        populateSelect("ucname", record.uccode, record.ucname);
-        document.getElementById("aicname").value = record.supervisor_name;
-    } catch(err){console.error(err);}
-    }
+    const res = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/aicheaderdata?tid=${tid}`, {
+    method: 'POST',
+    headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+    body: ""
+});
+    const result = await res.json();
+    const record = result.data[0]; // grab first row
+    populateSelect("campaignname", record.idcampaign, record.campaign_name);
+    populateSelect("provincename", record.pid, record.pname);
+    populateSelect("divisionname", record.divid, record.divname);
+    populateSelect("districtname", record.districtid, record.districtname);
+    populateSelect("tehsilname", record.tehsilid, record.tehsilname);
+    populateSelect("ucname", record.uccode, record.ucname);
+    document.getElementById("aicname").value = record.supervisor_name;
+    document.getElementById("fullname").value = record.supervisor_full_name;
+} catch(err){console.error(err);}
+}
 
-function populateSelect(selectId, value, text) {
+    function populateSelect(selectId, value, text) {
     const select = document.getElementById(selectId);
     if (!select) return;
 
@@ -709,8 +665,8 @@ function populateSelect(selectId, value, text) {
 </script>
 
 <script>
-const editSmcForm = document.getElementById("editsmcform");
-editSmcForm.addEventListener("submit", async (e) => {
+    const editSmcForm = document.getElementById("editsmcform");
+    editSmcForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(editSmcForm);
     const payload = Object.fromEntries(formData.entries());
@@ -719,144 +675,287 @@ editSmcForm.addEventListener("submit", async (e) => {
     showDiv("childinformation");
     const aicSpan = document.getElementById("addaiccode");
     if (aicSpan) {
-        aicSpan.textContent = `SMC Sheet#: SMC-${payload.aic.split("-")[1]}`;
-    }
+    aicSpan.textContent = `SMC Sheet#: SMC-${payload.aic.split("-")[1]}`;
+}
     renderFormData(payload.aic);
     aicid = payload.aic.split("-")[1]
     loadTeamData(payload.aic.split("-")[1]);
     loadTeamOptions(payload.aic.split("-")[1]);
-    toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextpage2", "prevpage2","tableSearch2"],"hide");
+    toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextPage2","pageInfo2", "prevPage2","tableSearch2"],"hide");
 
 
 });
 </script>
+<script>
+    function setupTablePagination({
+    tableBody,
+    searchInput,
+    prevBtn,
+    nextBtn,
+    pageInfo,
+    rowsPerPage = 5
+}) {
+    let currentPage = 1;
+
+    function paginate() {
+    const rows = Array.from(tableBody.querySelectorAll("tr"));
+    const filter = (searchInput?.value || "").toLowerCase();
+
+    // Filter rows
+    const filteredRows = filter
+    ? rows.filter(row => row.innerText.toLowerCase().includes(filter))
+    : rows;
+
+    // Compute pages
+    const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+
+    // Clamp current page
+    currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+
+    // Hide all rows
+    rows.forEach(row => (row.style.display = "none"));
+
+    // Show only current page slice
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    filteredRows.slice(start, end).forEach(row => (row.style.display = ""));
+
+    // Update UI
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    prevBtn.disabled = currentPage === 1 || filteredRows.length === 0;
+    nextBtn.disabled = currentPage === totalPages || filteredRows.length === 0;
+}
+
+    // Reset pagination and rerun
+    function resetPagination() {
+    currentPage = 1;
+    paginate();
+}
+
+    // Event listeners
+    searchInput.addEventListener("input", resetPagination);
+
+    prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+    currentPage--;
+    paginate();
+}
+});
+
+    nextBtn.addEventListener("click", () => {
+    currentPage++;
+    paginate();
+});
+
+    // Observe table changes
+    const observer = new MutationObserver(resetPagination);
+    observer.observe(tableBody, {childList: true});
+
+    // Initial call
+    if (tableBody.querySelector("tr")) resetPagination();
+
+    // Return function to manually reapply pagination if needed
+    return {paginate, resetPagination};
+}
+
+</script>
+
 <script>
 
     document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById("submitTeam");
     const form = document.querySelector("#teamModal form"); // grab form inside modal
     const modal = document.getElementById("teamModal");    // grab the modal itself
+    const rowsPerPage2 = 10;
+    let currentPage2 = 1;
+
+    const tableBody2 = document.getElementById("");
+    let allRows2 = [];
+    let filteredRows2 = [];
 
     submitBtn.addEventListener("click", async (e) => {
-        e.preventDefault(); // stop native submit
-        // Grab values
-        const team_no = document.getElementById("teamNumber").value.trim();
-        const team_member = document.getElementById("teamName").value.trim();
+    e.preventDefault(); // stop native submit
+    // Grab values
+    const team_no = document.getElementById("teamNumber").value.trim();
+    const team_member = document.getElementById("teamName").value.trim();
 
-        if (!team_no) {
-            Swal.fire({
-                icon: "error",
-                title: "Validation Error",
-                text: "Please fill in all required fields",
-                confirmButtonColor: "#d33"
-            });
-            return;
-        }
+    if (!team_no) {
+    Swal.fire({
+    icon: "error",
+    title: "Validation Error",
+    text: "Please fill in all required fields",
+    confirmButtonColor: "#d33"
+});
+    return;
+}
 
-        // Get current AIC header
-        const aicSpan = document.getElementById("addaiccode");
-        const match = aicSpan.textContent.match(/SMC-(\d+)/);
-        const idheader = match ? parseInt(match[1], 10) : null;
+    // Get current AIC header
+    const aicSpan = document.getElementById("addaiccode");
+    const match = aicSpan.textContent.match(/SMC-(\d+)/);
+    const idheader = match ? parseInt(match[1], 10) : null;
 
-        if (!idheader) {
-            Swal.fire({
-                icon: "error",
-                title: "AIC Header Missing",
-                text: "Cannot find current AIC number",
-                confirmButtonColor: "#d33"
-            });
-            return;
-        }
+    if (!idheader) {
+    Swal.fire({
+    icon: "error",
+    title: "AIC Header Missing",
+    text: "Cannot find current AIC number",
+    confirmButtonColor: "#d33"
+});
+    return;
+}
 
-        const enteredby = window.user_info?.idusers ?? null;
-        if (!enteredby) {
-            Swal.fire({
-                icon: "error",
-                title: "User Info Missing",
-                text: "Cannot determine the logged-in user",
-                confirmButtonColor: "#d33"
-            });
-            return;
-        }
+    const enteredby = window.user_info?.idusers ?? null;
+    if (!enteredby) {
+    Swal.fire({
+    icon: "error",
+    title: "User Info Missing",
+    text: "Cannot determine the logged-in user",
+    confirmButtonColor: "#d33"
+});
+    return;
+}
 
-        const payload = { idheader, team_no, team_member, enteredby, teamtype: 1 };
-        const payload2 = { idteam: editingTeamId, team_no, team_member};
-        let res;
-        try {
-            if (editingTeamId){
-                res = await fetch(`${window.API_BASE_URL}/campaign/campaign/updateteam`, {
-                    method: "POST",
-                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body: JSON.stringify(payload2)
-                });
-            }
-            else {
-                res = await fetch(`${window.API_BASE_URL}/campaign/campaign/createteam`, {
-                    method: "POST",
-                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            }
+    const payload = {idheader, team_no, team_member, enteredby, teamtype: 1};
+    const payload2 = {idteam: editingTeamId, team_no, team_member};
+    let res;
+    try {
+    if (editingTeamId){
+    res = await fetch(`${window.API_BASE_URL}/campaign/campaign/updateteam`, {
+    method: "POST",
+    headers: {"Accept": "application/json", "Content-Type": "application/json"},
+    body: JSON.stringify(payload2)
+});
+}
+    else {
+    res = await fetch(`${window.API_BASE_URL}/campaign/campaign/createteam`, {
+    method: "POST",
+    headers: {"Accept": "application/json", "Content-Type": "application/json"},
+    body: JSON.stringify(payload)
+});
+}
 
 
-            const data = await res.json();
+    const data = await res.json();
 
-            if (data.status === "success") {
-                Swal.fire({
-                    icon: "success",
-                    title: "Team Info Successfully Proceed",
-                    text: `Team ID: ${data.idteam}`,
-                    confirmButtonColor: "#3085d6"
-                });
-                form.reset(); // now works
-                modal.removeAttribute("open");
-                loadTeamData(idheader);
-                editingTeamId=null;
-                showDiv("childinformation");
-                loadTeamOptions(idheader);
-                toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextpage2", "prevpage2","tableSearch2"],"hide");
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Failed to Add/Edit Team",
-                    text: data.message || "Something went wrong.",
-                    confirmButtonColor: "#d33"
-                });
-            }
-        } catch (err) {
-            Swal.fire({
-                icon: "error",
-                title: "Server Error",
-                text: err.message || "Could not connect to server",
-                confirmButtonColor: "#d33"
-            });
-        }
-    });
+    if (data.status === "success") {
+    Swal.fire({
+    icon: "success",
+    title: "Team Info Successfully Proceed",
+    text: `Team ID: ${data.idteam}`,
+    confirmButtonColor: "#3085d6"
+});
+    form.reset(); // now works
+    modal.removeAttribute("open");
+    loadTeamData(idheader);
+    editingTeamId=null;
+    showDiv("childinformation");
+    loadTeamOptions(idheader);
+    toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextPage2","pageInfo2", "prevPage2","tableSearch2"],"hide");
+} else {
+    Swal.fire({
+    icon: "error",
+    title: "Failed to Add/Edit Team",
+    text: data.message || "Something went wrong.",
+    confirmButtonColor: "#d33"
+});
+}
+} catch (err) {
+    Swal.fire({
+    icon: "error",
+    title: "Server Error",
+    text: err.message || "Could not connect to server",
+    confirmButtonColor: "#d33"
+});
+}
+});
+});
+    const paginations = setupTablePagination({
+    tableBody: document.getElementById("tableBody"),
+    searchInput: document.getElementById("tableSearch"),
+    prevBtn: document.getElementById("prevPage"),
+    nextBtn: document.getElementById("nextPage"),
+    pageInfo: document.getElementById("pageInfo"),
+    rowsPerPage: 3 // any number you want
 });
 
+    // If you fetch new rows dynamically later, just call:
+    paginations.resetPagination();
+
 </script>
 <script>
-    window.openEditModal = function(idteam, team_no, team_member) {
-    // Fill modal fields
-    document.getElementById("teamNumber").value = team_no;
-    document.getElementById("teamName").value = team_member;
 
-    document.getElementById("teamModal").setAttribute("open", "");
-    editingTeamId = idteam;
+// Utilities to show/hide the modal (Tailwind: hidden <-> flex)
+function showTeamModal() {
+  const modal = document.getElementById('teamModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function hideTeamModal() {
+  const modal = document.getElementById('teamModal');
+  modal.classList.remove('flex');
+  modal.classList.add('hidden');
+
+  // reset state
+  editingTeamId = null;
+  document.getElementById('teamNumber').value = '';
+  document.getElementById('teamName').value = '';
+  // optional: reset title
+  const title = document.getElementById('modalTitle');
+  if (title) title.querySelector('span.flex-none').textContent = 'ADD TEAM INFORMATION';
+}
+
+// Expose close for your ✕ button if it uses onclick
+window.closeTeamModal = hideTeamModal;
+
+// Open for "Add Team" button (if you have one calling this)
+window.openTeamModal = function () {
+  const title = document.getElementById('modalTitle');
+  if (title) title.querySelector('span.flex-none').textContent = 'ADD TEAM INFORMATION';
+  showTeamModal();
 };
 
+// Delegate clicks for ANY .edit-btn (no globals needed on the button)
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.edit-btn');
+  if (!btn) return;
+
+  const idteam = btn.dataset.idteam;
+  const team_no = btn.dataset.teamno;
+  const team_member = btn.dataset.teammember;
+
+  // Fill fields
+  document.getElementById('teamNumber').value = team_no || '';
+  document.getElementById('teamName').value = team_member || '';
+
+  // Title: Edit mode
+  const title = document.getElementById('modalTitle');
+  if (title) title.querySelector('span.flex-none').textContent = 'EDIT TEAM INFORMATION';
+
+  editingTeamId = idteam || null;
+  showTeamModal();
+});
+
+// Quality-of-life: close on backdrop click + ESC
+document.getElementById('teamModal')?.addEventListener('click', function (e) {
+  if (e.target.id === 'teamModal') hideTeamModal();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') hideTeamModal();
+});
 </script>
+
+
 <script>
     document.getElementById("setoptions").addEventListener("change", function () {
-        toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextpage2", "prevpage2","tableSearch2"],'show');
-    });
+    toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextPage2","pageInfo2", "prevPage2", "tableSearch2"], 'show');
+});
 </script>
 
 <script>
 
-document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("update_user_profile");
-    const rowsPerPage2 = 300;
+    const rowsPerPage2 = 10;
     let currentPage2 = 1;
 
     const tableBody2 = document.getElementById("tableBody2");
@@ -864,37 +963,37 @@ document.addEventListener("DOMContentLoaded", () => {
     let filteredRows2 = [];
 
     // Fetch data from API
-    async function fetchChildData(idheader, idteam) {
-        try {
-            const res = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/childata`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ idheader, idteam })
-            });
-            const json = await res.json();
+    window.fetchChildData = async function(idheader, idteam) {
+    try {
+    const res = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/childata`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({idheader, idteam})
+});
+    const json = await res.json();
 
-            if (json.status === "success" && Array.isArray(json.data)) {
-                renderChildData(json.data);
-            } else {
-                tableBody2.innerHTML = `<tr><td colspan="14" class="px-6 py-4 text-center text-red-500">No records found</td></tr>`;
-            }
-        } catch (err) {
-            console.error("API error:", err);
-            tableBody2.innerHTML = `<tr><td colspan="14" class="px-6 py-4 text-center text-red-500">Failed to load data</td></tr>`;
-        }
-    }
+    if (json.status === "success" && Array.isArray(json.data)) {
+    renderChildData(json.data);
+} else {
+    tableBody2.innerHTML = `<tr><td colspan="14" class="px-6 py-4 text-center text-red-500">No records found</td></tr>`;
+}
+} catch (err) {
+    console.error("API error:", err);
+    tableBody2.innerHTML = `<tr><td colspan="14" class="px-6 py-4 text-center text-red-500">Failed to load data</td></tr>`;
+}
+}
 
     // Render rows into table
     function renderChildData(data) {
-        tableBody2.innerHTML = "";
+    tableBody2.innerHTML = "";
 
-        data.forEach(child => {
-            const row = document.createElement("tr");
-            row.className = "hover:bg-gray-50 transition-colors";
+    data.forEach(child => {
+    const row = document.createElement("tr");
+    row.className = "hover:bg-gray-50 transition-colors";
 
-            const dayText = `Day ${child.day}`;
+    const dayText = `Day ${child.day}`;
 
-            row.innerHTML = `
+    row.innerHTML = `
                 <td class="px-6 py-4 border-b">${dayText}</td>
                 <td class="px-6 py-4 border-b">${child.house || "-"}</td>
                 <td class="px-6 py-4 border-b font-medium text-gray-900">${child.name || "-"}</td>
@@ -918,369 +1017,601 @@ document.addEventListener("DOMContentLoaded", () => {
                             .83-.497z"/>
                         </svg>
                     </button>
-                    <button class="delete-button text-red-600 hover:text-red-800 px-3 py-2 bg-red-100 hover:bg-red-200 rounded-lg flex items-center justify-center transition" data-idchildren="${child.idchildren}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 6v14a2 2
-                            0 0 1-2 2H7a2 2 0 0 1-2-2V6M3 6h18M8 6V4a2 2
-                            0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                    </button>
+                    <button
+                            class="delete-button text-red-600 hover:text-red-800 px-3 py-2 bg-red-100 hover:bg-red-200 rounded-lg flex items-center justify-center transition"
+                            data-idchildren="${child.idchildren}"
+                            onclick="deleteChildren(${child.idchildren})"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 6v14a2 2
+                                0 0 1-2 2H7a2 2 0 0 1-2-2V6M3 6h18M8 6V4a2 2
+                                0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
                 </td>
             `;
-            tableBody2.appendChild(row);
-        });
-        // Add event listeners after rendering
-        tableBody2.querySelectorAll(".edit-button").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const id = e.currentTarget.dataset.idchildren;
-                handleEditChild(id);
-            });
-        });
+    tableBody2.appendChild(row);
+});
+    // Add event listeners after rendering
+    tableBody2.querySelectorAll(".edit-button").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+    const id = e.currentTarget.dataset.idchildren;
+    handleEditChild(id);
+});
+});
 
-        tableBody2.querySelectorAll(".delete-button").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const id = e.currentTarget.dataset.idchildren;
-                console.log("Delete clicked for idchildren:", idchildren);
-                // Call your custom delete function
-                handleDeleteChild(id);
-            });
-        });
 
-        // Example custom functions
-        async function handleEditChild(id) {
-            try {
-                // Open modal first
-                const modal = document.getElementById("profileModal");
-                modal.classList.remove("hidden");
-                editingChildRecord = id
-                // Fetch data from FastAPI endpoint
-                const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/childata/${id}`);
-                const result = await response.json();
+    // Example custom functions
+    async function handleEditChild(id) {
+    try {
+    // Open modal first
+    const modal = document.getElementById("profileModal");
+    modal.classList.remove("hidden");
+    editingChildRecord = id
+    // Fetch data from FastAPI endpoint
+    const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/get/childata/${id}`);
+    const result = await response.json();
 
-                if (result.status !== "success") {
-                    console.error("Failed to fetch child data:", result.message);
-                    return;
-                }
+    if (result.status !== "success") {
+    console.error("Failed to fetch child data:", result.message);
+    return;
+}
 
-                const data = result.data;
+    const data = result.data;
 
-                // Populate form fields
-                document.getElementById("dayname").value = data.day ?? "";
-                document.getElementById("housenumber").value = data.house ?? "";
-                document.getElementById("childname").value = data.name ?? "";
-                document.getElementById("fathername").value = data.father ?? "";
-                document.getElementById("gender").value = data.gender; // adjust according to your DB
-                document.getElementById("age").value = data.age ?? "";
-                document.getElementById("missingRounds").value = data.nofmc ?? "";
-                document.getElementById("address").value = data.address ?? "";
-                document.getElementById("missedReason").value = data.nodose ?? "";
-                document.getElementById("subReason").value = data.reject ?? ""; // if you have mapping
-                document.getElementById("location").value = data.location ?? "";
-                document.getElementById("hrmp").value = data.hrmp;
-                if (data.returndate) {
-                    const parts = data.returndate.split('-'); // ["yyyy","mm","dd"]
-                    if (parts.length === 3) {
-                        document.getElementById("date").value = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                    } else {
-                        document.getElementById("date").value = data.returndate; // fallback
-                    }
-                } else {
-                    document.getElementById("date").value = "";
-                }
+    // Populate form fields
+    document.getElementById("dayname").value = data.day ?? "";
+    document.getElementById("housenumber").value = data.house ?? "";
+    document.getElementById("childname").value = data.name ?? "";
+    document.getElementById("fathername").value = data.father ?? "";
+    document.getElementById("gender").value = data.gender; // adjust according to your DB
+    document.getElementById("age").value = data.age ?? "";
+    document.getElementById("missingRounds").value = data.nofmc ?? "";
+    document.getElementById("address").value = data.address ?? "";
+    document.getElementById("missedReason").value = data.nodose ?? "";
+    updateSubReasonOptions(data.nodose ?? "", data.reject ?? "");
+    document.getElementById("location").value = data.location ?? "";
+    document.getElementById("hrmp").value = data.hrmp;
+    if (data.returndate) {
+    const parts = data.returndate.split('-'); // ["yyyy","mm","dd"]
+    if (parts.length === 3) {
+    document.getElementById("date").value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+} else {
+    document.getElementById("date").value = data.returndate; // fallback
+}
+} else {
+    document.getElementById("date").value = "";
+}
 
-                console.log("Modal form populated with child data:", data);
+    console.log("Modal form populated with child data:", data);
 
-            } catch (error) {
-                console.error("Error fetching child data:", error);
-            }
+} catch (error) {
+    console.error("Error fetching child data:", error);
+}
 
-        }
+}
 
-        function handleDeleteChild(id) {
-            console.log("Custom delete logic for:", id);
-        }
+    function handleDeleteChild(id) {
+    console.log("Custom delete logic for:", id);
+}
 
-        allRows2 = Array.from(tableBody2.getElementsByTagName("tr"));
-        filteredRows2 = [...allRows2];
-        showPage2(1);
-    }
-
-    function updatePagination2() {
-        const input = document.getElementById("tableSearch2").value.toLowerCase();
-        filteredRows2 = allRows2.filter(row =>
-            row.textContent.toLowerCase().includes(input)
-        );
-        currentPage2 = 1;
-        showPage2(currentPage2);
-    }
-
-    function showPage2(page) {
-        const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
-
-        allRows2.forEach(row => row.style.display = "none");
-
-        const start = (page - 1) * rowsPerPage2;
-        const end = start + rowsPerPage2;
-        filteredRows2.slice(start, end).forEach(row => row.style.display = "");
-
-        document.getElementById("currentPage2").textContent = `${page} / ${totalPages}`;
-        currentPage2 = page;
-    }
-
-    function prevPage2() {
-        if (currentPage2 > 1) {
-            showPage2(currentPage2 - 1);
-        }
-    }
-
-    function nextPage2() {
-        const totalPages = Math.ceil(filteredRows2.length / rowsPerPage2) || 1;
-        if (currentPage2 < totalPages) {
-            showPage2(currentPage2 + 1);
-        }
-    }
-
+    allRows2 = Array.from(tableBody2.getElementsByTagName("tr"));
+    filteredRows2 = [...allRows2];
+}
     async function submitChildData(payload, editChildRecord = null) {
-        try {
-            let url = "";
-            let method = "";
+    try {
+    let url = "";
+    let method = "";
 
-            if (editChildRecord) {
-                // Editing an existing child → use PUT
-                url = `${window.API_BASE_URL}/campaign/update/${editChildRecord}`;
-                method = "PUT";
-                delete payload.idheader;
-                delete payload.idteam;
+    if (editChildRecord) {
+    // Editing an existing child → use PUT
+    url = `${window.API_BASE_URL}/campaign/update/${editChildRecord}`;
+    method = "PUT";
+    delete payload.idheader;
+    delete payload.idteam;
 
-            } else {
-                // Creating a new child → use POST
-                url = `${window.API_BASE_URL}/campaign/campaign/add/childata`;
-                method = "POST";
-            }
+} else {
+    // Creating a new child → use POST
+    url = `${window.API_BASE_URL}/campaign/campaign/add/childata`;
+    method = "POST";
+}
 
-            // Hit the API
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
+    // Hit the API
+    const response = await fetch(url, {
+    method: method,
+    headers: {
+    "Content-Type": "application/json",
+},
+    body: JSON.stringify(payload),
+});
 
-            const data = await response.json();
+    const data = await response.json();
 
-            if (!response.ok) {
-            Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: data.message || "Failed to submit child data",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                });
-                console.error("Error submitting child data:", data);
-                return;
-            }
+    if (!response.ok) {
+    Swal.fire({
+    icon: 'error',
+    title: 'Error!',
+    text: data.message || "Failed to submit child data",
+    timer: 2000,
+    timerProgressBar: true,
+    showConfirmButton: false,
+});
+    console.error("Error submitting child data:", data);
+    return;
+}
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: data.message || "Child data proceed successfully",
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-            });
-            return data;
-        } catch (err) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Unexpected Error!',
-                text: "Something went wrong",
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-            });
-        }
-    }
+    Swal.fire({
+    icon: 'success',
+    title: 'Success!',
+    text: data.message || "Child data proceed successfully",
+    timer: 2000,
+    timerProgressBar: true,
+    showConfirmButton: false,
+});
+    document.getElementById("locationContainer").classList.add("hidden");
+    return data;
+} catch (err) {
+    Swal.fire({
+    icon: 'error',
+    title: 'Unexpected Error!',
+    text: "Something went wrong",
+    timer: 2000,
+    timerProgressBar: true,
+    showConfirmButton: false,
+});
+}
+}
 
 
     const setoptions = document.getElementById("setoptions");
     setoptions.addEventListener("change", () => {
-        const selectedValue = setoptions.value;
-        if (!selectedValue) return; // nothing selected
+    const selectedValue = setoptions.value;
+    if (!selectedValue) return; // nothing selected
 
-        let [aicid, teamid] = selectedValue.split(",").map(v => v.trim());
-        if (!aicid || !teamid) return;
+    let [aicid, teamid] = selectedValue.split(",").map(v => v.trim());
+    if (!aicid || !teamid) return;
 
-        fetchChildData(parseInt(aicid, 10), parseInt(teamid, 10));
-    });
+    fetchChildData(parseInt(aicid, 10), parseInt(teamid, 10));
+});
 
     form.addEventListener("submit", async (e) => {
-        e.preventDefault(); // ✅ Prevent page reload
+    e.preventDefault(); // ✅ Prevent page reload
 
-        try {
-            // Grab AIC + Team from dropdown
-            const selectedValue = document.getElementById("setoptions").value;
-            let aicid = null, teamid = null;
-            if (selectedValue) {
-                [aicid, teamid] = selectedValue.split(",").map(v => v.trim());
-            }
-            let dateValue = document.getElementById("date").value; // e.g. "08-08-2025"
+    try {
+    // Grab AIC + Team from dropdown
+    const selectedValue = document.getElementById("setoptions").value;
+    let aicid = null, teamid = null;
+    if (selectedValue) {
+    [aicid, teamid] = selectedValue.split(",").map(v => v.trim());
+}
+    let dateValue = document.getElementById("date").value; // e.g. "08-08-2025"
 
-            let returndate = null;
+    let returndate = null;
 
-            if (dateValue && dateValue.trim() !== "") {
-                // split dd-mm-yyyy into parts
-                let [day, month, year] = dateValue.split("-");
-                // rearrange into yyyy-mm-dd
-                returndate = `${year}-${month}-${day}`;
-            }
+    if (dateValue && dateValue.trim() !== "") {
+    // split dd-mm-yyyy into parts
+    let [day, month, year] = dateValue.split("-");
+    // rearrange into yyyy-mm-dd
+    returndate = `${year}-${month}-${day}`;
+}
 
-            // Build payload
-            const payload = {
-                idheader: parseInt(aicid, 10),
-                idteam: parseInt(teamid, 10),
-                day: parseInt(document.getElementById("dayname").value, 10),
-                house: document.getElementById("housenumber").value.trim().toUpperCase(),
-                name: document.getElementById("childname").value.trim().toUpperCase(),
-                father: document.getElementById("fathername").value.trim().toUpperCase(),
-                gender: document.getElementById("gender").value.trim(),
-                age: parseInt(document.getElementById("age").value, 10),
-                address: document.getElementById("address").value.trim().toUpperCase(),
-                nofmc: parseInt(document.getElementById("missingRounds").value, 10),
-                reasontype: "1", // default hidden
-                nodose: document.getElementById("missedReason").value.trim(),
-                reject: document.getElementById("subReason").value.trim(),
-                location: document.getElementById("location").value.trim().toUpperCase() || null,
-                hrmp: document.getElementById("hrmp").value.trim(),
-                returndate: returndate,
-                dateofvacc: null,
-                idusers: window.user_info?.idusers || 10
-            };
-            await submitChildData(payload, editingChildRecord || null);
-            fetchChildData(parseInt(aicid, 10), parseInt(teamid, 10));
-            form.reset();
-            editingChildRecord = null;
+    // Build payload
+    const payload = {
+    idheader: parseInt(aicid, 10),
+    idteam: parseInt(teamid, 10),
+    day: parseInt(document.getElementById("dayname").value, 10),
+    house: document.getElementById("housenumber").value.trim().toUpperCase(),
+    name: document.getElementById("childname").value.trim().toUpperCase(),
+    father: document.getElementById("fathername").value.trim().toUpperCase(),
+    gender: document.getElementById("gender").value.trim(),
+    age: parseInt(document.getElementById("age").value, 10),
+    address: document.getElementById("address").value.trim().toUpperCase(),
+    nofmc: parseInt(document.getElementById("missingRounds").value, 10),
+    reasontype: "1", // default hidden
+    nodose: document.getElementById("missedReason").value.trim(),
+    reject: document.getElementById("subReason").value.trim(),
+    location: document.getElementById("location").value.trim().toUpperCase() || null,
+    hrmp: document.getElementById("hrmp").value.trim(),
+    returndate: returndate,
+    dateofvacc: null,
+    idusers: window.user_info?.idusers || 10
+};
+    await submitChildData(payload, editingChildRecord || null);
+    fetchChildData(parseInt(aicid, 10), parseInt(teamid, 10));
+    form.reset();
 
-        } catch (error) {
-            console.error("Error submitting form:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Oops!",
-                text: error.message || "Something went wrong",
-                confirmButtonColor: "#dc2626" // Tailwind red-600
-            });
-        }
-    });
+    editingChildRecord = null;
+
+} catch (error) {
+    console.error("Error submitting form:", error);
+    Swal.fire({
+    icon: "error",
+    title: "Oops!",
+    text: error.message || "Something went wrong",
+    confirmButtonColor: "#dc2626" // Tailwind red-600
 });
+}
+});
+});
+    const pagination = setupTablePagination({
+    tableBody: document.getElementById("tableBody2"),
+    searchInput: document.getElementById("tableSearch2"),
+    prevBtn: document.getElementById("prevPage2"),
+    nextBtn: document.getElementById("nextPage2"),
+    pageInfo: document.getElementById("pageInfo2"),
+    rowsPerPage: 5 // any number you want
+});
+
+    // If you fetch new rows dynamically later, just call:
+    pagination.resetPagination();
+
 </script>
 <script>
 
-document.getElementById("openModalBtn").addEventListener("click", (e) => {
+    document.getElementById("openModalBtn").addEventListener("click", (e) => {
     e.preventDefault(); // prevent default form submission
     document.getElementById("update_user_profile").reset(); // reset the form
-});
+    editingChildRecord=null;
 
+});
 
 
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("aicheaderform");
     const submitBtn = document.getElementById("submitmydata");
     toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        positionClass: "toast-top-right",
-        preventDuplicates: true,
-        timeOut: 4000,
-        extendedTimeOut: 2000,
-        showClass: "animate__animated animate__fadeInDown",
-        hideClass: "animate__animated animate__fadeOutUp"
-    };
+    closeButton: true,
+    progressBar: true,
+    positionClass: "toast-top-right",
+    preventDuplicates: true,
+    timeOut: 4000,
+    extendedTimeOut: 2000,
+    showClass: "animate__animated animate__fadeInDown",
+    hideClass: "animate__animated animate__fadeOutUp"
+};
     submitBtn.addEventListener("click", async (e) => {
-        e.preventDefault(); // stop native submit
+    e.preventDefault(); // stop native submit
 
-        let valid = true;
-        let firstInvalid = null;
+    let valid = true;
+    let firstInvalid = null;
 
-        // validate all required fields
-        form.querySelectorAll("[required]").forEach(field => {
-            if (!field.value || field.value.trim() === "") {
-                valid = false;
-                if (!firstInvalid) firstInvalid = field;
+    // validate all required fields
+    form.querySelectorAll("[required]").forEach(field => {
+    if (!field.value || field.value.trim() === "") {
+    valid = false;
+    if (!firstInvalid) firstInvalid = field;
 
-                toastr.error(
-                    `${field.name.replace(/name/i, " Name")} is required`,
-                    "Validation Error"
-                );
-            }
-        });
+    toastr.error(
+    `${field.name.replace(/name/i, " Name")} is required`,
+    "Validation Error"
+    );
+}
+});
 
-        if (!valid) {
-            if (firstInvalid) firstInvalid.focus();
-            return;
-        }
+    if (!valid) {
+    if (firstInvalid) firstInvalid.focus();
+    return;
+}
 
-        // collect data
-        console.log(form);
-        const payload = {
-            idcampaign: form.querySelector("#campaignname").value,
-            iduc: form.querySelector("#ucname").value,
-            supervisor_name: form.querySelector("#aicname").value,
-            supervisor_id: parseInt(aicid, 10),
-            enteredby: window.user_info?.idusers || 10 // fallback
-        };
+    // collect data
+    console.log(form);
+    const payload = {
+    idcampaign: form.querySelector("#campaignname").value,
+    iduc: form.querySelector("#ucname").value,
+    supervisor_name: form.querySelector("#aicname").value,
+    supervisor_full_name: form.querySelector("#fullname").value,
+    supervisor_id: parseInt(aicid, 10),
+    enteredby: window.user_info?.idusers || 10 // fallback
+};
 
-        try {
-            const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/updateheader`, {
-                method: "POST",
-                headers: {
-                    "accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
+    try {
+    const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/updateheader`, {
+    method: "POST",
+    headers: {
+    "accept": "application/json",
+    "Content-Type": "application/json"
+},
+    body: JSON.stringify(payload)
+});
 
-            const data = await response.json();
+    const data = await response.json();
 
-            if (data && data.status === "success") {
-                // success alert
-                Swal.fire({
-                    icon: "success",
-                    title: "AIC Successfully Added",
-                    text: `Header ID: ${data.idheader ?? "N/A"}`,
-                    showConfirmButton: true,
-                    confirmButtonColor: "#3085d6"
-                });
+    if (data && data.status === "success") {
+    // success alert
+    Swal.fire({
+    icon: "success",
+    title: "AIC Successfully Added",
+    text: `Header ID: ${data.idheader ?? "N/A"}`,
+    showConfirmButton: true,
+    confirmButtonColor: "#3085d6",
+    timer: 1500,          // Auto close after 1500ms
+    timerProgressBar: true
+});
 
-                // reset form
-                // form.reset();
-                const aicSpan = document.getElementById("addaiccode");
-                if (aicSpan) {
-                    aicSpan.textContent = `SMC Sheet#: SMC-${data.idheader}`;
-                }
-            } else {
-                // error alert
-                Swal.fire({
-                    icon: "error",
-                    title: "Failed to Add AIC",
-                    text: data.message || "Something went wrong.",
-                    confirmButtonColor: "#d33"
-                });
-            }
-        } catch (err) {
-            Swal.fire({
-                icon: "error",
-                title: "Server Error",
-                text: err.message || "Could not connect to server.",
-                confirmButtonColor: "#d33"
-            });
-        }
-    });
+    // reset form
+    // form.reset();
+    const aicSpan = document.getElementById("addaiccode");
+    if (aicSpan) {
+    aicSpan.textContent = `SMC Sheet#: SMC-${data.idheader}`;
+}
+} else {
+    // error alert
+    Swal.fire({
+    icon: "error",
+    title: "Failed to Update AIC",
+    text: data.detail || data.message || "Something went wrong.",
+    confirmButtonColor: "#d33"
+});
+}
+} catch (err) {
+    Swal.fire({
+    icon: "error",
+    title: "Server Error",
+    text: err.message || "Could not connect to server.",
+    confirmButtonColor: "#d33"
+});
+}
+});
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize validation states
+    window.validationStates = {
+        fathername: false,
+        childname: false,
+    };
+
+    // Toggle submit button
+    function toggleSubmitButtonedit() {
+        const btn = document.getElementById('submitchildata');
+        if (!btn) return;
+
+        const allValid = Object.values(window.validationStates).every(v => v === true);
+
+        if (allValid) {
+            btn.disabled = false;
+            btn.style.removeProperty('background-color');
+            btn.style.removeProperty('background-image');
+            btn.style.removeProperty('border-color');
+            btn.style.removeProperty('cursor');
+        } else {
+            btn.disabled = true;
+            btn.style.setProperty('background-color', 'gray', 'important');
+            btn.style.setProperty('background-image', 'none', 'important');
+            btn.style.setProperty('border-color', 'gray', 'important');
+            btn.style.setProperty('cursor', 'not-allowed', 'important');
+        }
+    }
+
+    // Strict name validation
+    function validateName(input, fieldKey, fieldDisplayName) {
+        const value = input.value;
+
+        const minLength = 3;
+        const maxLength = 50;
+        const onlyLettersSpaces = /^[A-Za-z ]+$/;
+        const repeatedWords = /\b(\w+)\s+\1\b/i; // 2 repeated words
+        const tripleRepeatedWords = /\b(\w+)\s+\1\s+\1\b/i; // 3 repeated words
+        const doubleSpaces = /\s{2,}/;
+        const tripleLetters = /(.)\1\1/;
+        const hasNumbers = /\d/;
+        const singleLetterWord = /\b\w\b/;
+
+        let error = "";
+
+        if (!value.trim()) {
+            error = `${fieldDisplayName} is required.`;
+        } else if (value !== value.trim()) {
+            error = `${fieldDisplayName} cannot have spaces at the start or end.`;
+        } else if (value.length < minLength) {
+            error = `${fieldDisplayName} must be at least ${minLength} characters.`;
+        } else if (value.length > maxLength) {
+            error = `${fieldDisplayName} cannot exceed ${maxLength} characters.`;
+        } else if (!onlyLettersSpaces.test(value)) {
+            error = `${fieldDisplayName} can only contain letters and spaces.`;
+        } else if (doubleSpaces.test(value)) {
+            error = `${fieldDisplayName} cannot contain consecutive spaces.`;
+        } else if (repeatedWords.test(value)) {
+            error = `${fieldDisplayName} cannot contain repeated words.`;
+        } else if (tripleRepeatedWords.test(value)) {
+            error = `${fieldDisplayName} cannot contain three identical words in sequence.`;
+        } else if (tripleLetters.test(value)) {
+            error = `${fieldDisplayName} cannot contain the same letter three times in a row.`;
+        } else if (hasNumbers.test(value)) {
+            error = `${fieldDisplayName} cannot contain numbers.`;
+        } else if (singleLetterWord.test(value)) {
+            error = `${fieldDisplayName} cannot contain single-letter words.`;
+        }
+
+        if (error) {
+            input.classList.remove("border-gray-300");
+            input.classList.add("border-red-500", "focus:ring-red-300");
+
+            setTimeout(() => {
+                input.classList.remove("border-red-500", "focus:ring-red-300");
+                input.classList.add("border-gray-300");
+            }, 3000);
+
+            toastr.error(error, "Validation Error");
+            window.validationStates[fieldKey] = false;
+        } else {
+            window.validationStates[fieldKey] = true;
+        }
+
+        toggleSubmitButtonedit();
+    }
+
+    // Inputs
+    const fatherInput = document.getElementById("fathername");
+    const childInput = document.getElementById("childname");
+
+    // Event listeners
+    fatherInput.addEventListener("blur", () => validateName(fatherInput, "fathername", "Father Name"));
+    childInput.addEventListener("blur", () => validateName(childInput, "childname", "Child Name"));
+
+    // Toastr options
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "timeOut": "3000",
+        "extendedTimeOut": "1000",
+        "positionClass": "toast-top-right"
+    };
+
+    // Initialize button state
+    toggleSubmitButtonedit();
+});
+</script>
+<script>
+async function deleteTeamMember(idteam) {
+    // 1️⃣ Show confirmation modal
+    const result = await Swal.fire({
+        title: "Confirm Deletion",
+        text: "Are you sure you want to delete this team and all its children? This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true
+    });
+
+    if (result.isConfirmed) {
+        hideDiv("childinformation");
+        toggleElementsById(["openModalBtn", "missedChildrenTable", "currentPage2", "nextPage2","pageInfo2", "prevPage2","tableSearch2"],"hide");
+        try {
+            // 2️⃣ Call Django async view to handle deletion
+            const response = await fetch("{% url 'campaign_data:manage_big_team_level_data' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken() // if CSRF protection is enabled
+                },
+                body: JSON.stringify({ idteam: idteam, deleted_by: window.user_info?.idusers ?? null})
+            });
+            const data = await response.json();
+
+            // 3️⃣ Show result via SweetAlert
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error",
+                title: data.status === "success" ? "Deleted!" : "Error!",
+                text: data.message,
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
+            });
+
+            // Optional: refresh table or remove deleted row from DOM
+            if (data.status === "success") {
+                document.getElementById(`team-row-${idteam}`)?.remove();
+                const aicSpan = document.getElementById("addaiccode");
+                const match = aicSpan.textContent.match(/SMC-(\d+)/);
+                const idheader = match ? parseInt(match[1], 10) : null;
+                loadTeamData(idheader);
+                loadTeamOptions(idheader);
+                showDiv("childinformation");
+            }
+
+        } catch (err) {
+            console.error("Deletion error:", err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Unexpected error occurred",
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
+            });
+        }
+    }
+}
+
+// Helper function to get CSRF token from cookies or meta tag
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+</script>
+<script>
+async function deleteChildren(idchildren) {
+    // 1️⃣ Show confirmation modal
+    const result = await Swal.fire({
+        title: "Confirm Deletion",
+        text: "Are you sure you want to delete this child? This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        // 2️⃣ Call Django async view to handle deletion
+        const response = await fetch("{% url 'campaign_data:manage_big_child_level_data' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify({
+                idchildren: idchildren,
+                deleted_by: window.user_info?.idusers ?? null
+            })
+        });
+
+        const data = await response.json();
+
+        // 3️⃣ Show result via SweetAlert
+        Swal.fire({
+            icon: data.status === "success" ? "success" : "error",
+            title: data.status === "success" ? "Deleted!" : "Error!",
+            text: data.message,
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+        });
+
+        // 4️⃣ Optional: refresh table or remove deleted row from DOM
+        if (data.status === "success") {
+            const setoptions = document.getElementById("setoptions");
+            if (setoptions) {
+                const selectedValue = setoptions.value;
+                if (selectedValue) {
+                    let [aicid, teamid] = selectedValue.split(",").map(v => v.trim());
+                    if (aicid && teamid) {
+                        window.fetchChildData(parseInt(aicid, 10), parseInt(teamid, 10));
+                    }
+                }
+            }
+        }
+
+    } catch (err) {
+        console.error("Deletion error:", err);
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Unexpected error occurred",
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+        });
+    }
+};
+
+// Helper function to get CSRF token from cookies or meta tag
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+</script>
+
+
+
+

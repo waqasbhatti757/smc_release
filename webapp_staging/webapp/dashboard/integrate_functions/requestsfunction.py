@@ -4,7 +4,7 @@ async def extract_geo_data(request):
     province_code = division_code = district_code = tehsil_code = 0
     province_name = division_name = district_name = tehsil_name = None
     user_info = await sync_to_async(request.session.get)('user_info')
-    usertype = user_info.get("usertype") if user_info else None
+    usertype = user_info.get("usertype")
     jwt_token = await sync_to_async(request.session.get)('jwt_token')  # Ensure this is set in session
     if usertype == 3:
         province_code = user_info.get("idoffice")
