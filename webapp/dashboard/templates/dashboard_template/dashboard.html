@@ -1,0 +1,28 @@
+{% extends "base_header_main.html" %}
+{% load static %}
+
+{% block title %}Welcome To SMC Tracker{% endblock %}
+{% block extra_js %}
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        const toggleBtn = document.getElementById('togglePassword');-->
+<!--        const passwordField = document.getElementById('password');-->
+
+<!--        toggleBtn.addEventListener('click', function () {-->
+<!--            const icon = this.querySelector('i');-->
+<!--            if (passwordField.type === 'password') {-->
+<!--                passwordField.type = 'text';-->
+<!--                icon.classList.remove('fa-eye');-->
+<!--                icon.classList.add('fa-eye-slash');-->
+<!--            } else {-->
+<!--                passwordField.type = 'password';-->
+<!--                icon.classList.remove('fa-eye-slash');-->
+<!--                icon.classList.add('fa-eye');-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+{% include "partial_js_func/user_form_creation.js" %}
+{% include "partial_js_func/update_profile.js" %}
+
+{% endblock %}

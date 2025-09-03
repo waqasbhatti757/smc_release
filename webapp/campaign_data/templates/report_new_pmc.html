@@ -1,0 +1,251 @@
+{% extends "base_header_main.html" %}
+{% load static %}
+
+{% block title %}Welcome To SMC Tracker{% endblock %}
+
+{% block content %}
+<div class="text-center mb-10">
+    <div>
+        <h1 class="flex flex-row flex-nowrap items-center my-6">
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+            <span class="flex-none block mx-2 px-2 py-2 text-4xl font-medium uppercase bg-black text-white">
+        REPORT PMC STATUS
+    </span>
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+        </h1>
+    </div>
+</div>
+<div>
+    <form id="editsmcform" method="POST" action="#"
+          class="space-y-4">
+        {% csrf_token %}
+        <div class="grid grid-cols-12 gap-4">
+
+            <div class="col-span-12 md:col-span-1">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Campaign <span class="text-red-600">*</span>
+                    </label>
+                    <select id="campaign" name="campaign"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Campaign</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Province <span class="text-red-600">*</span>
+                    </label>
+                    <select id="province" name="province"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Select Province</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Division <span class="text-red-600">*</span>
+                    </label>
+                    <select id="division" name="division"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Division</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        District <span class="text-red-600">*</span>
+                    </label>
+                    <select id="district" name="district"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>District</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        Tehsil <span class="text-red-600">*</span>
+                    </label>
+                    <select id="tehsil" name="tehsil"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>Tehsil</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-2">
+                <div class="relative">
+                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">
+                        UC's <span class="text-red-600">*</span>
+                    </label>
+                    <select id="uc" name="uc"
+                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white">
+                        <option value="" disabled selected>UC</option>
+                    </select>
+                </div>
+            </div>
+<!--            <div class="col-span-12 md:col-span-2">-->
+<!--                <div class="relative">-->
+<!--                    <label class="mb-1 block text-[10px] font-bold text-gray-700 dark:text-gray-400">-->
+<!--                        AIC <span class="text-red-600">*</span>-->
+<!--                    </label>-->
+<!--                    <select id="aic" name="aic"-->
+<!--                            class="h-16 w-full rounded-xl border border-gray-300 bg-white px-2 text-[10px] text-gray-800 shadow-md transition-all ease-in-out focus:border-blue-500 focus:ring-2 focus:ring-blue-300 dark:border-gray-700 dark:bg-blue-900 dark:text-white">-->
+<!--                        <option value="" disabled selected>Select AIC</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div class="justify-center col-span-12 md:col-span-1 pt-9">
+                <button type="submit"
+                        class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-2
+                   text-white font-bold shadow-lg ring-1 ring-green-500/30
+                   transition-all duration-300
+                   hover:bg-green-700 hover:shadow-xl
+                   active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-folder-search2-icon lucide-folder-search-2">
+                        <circle cx="11.5" cy="12.5" r="2.5"/>
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+                        <path d="M13.3 14.3 15 16"/>
+                    </svg>
+                    Search
+                </button>
+            </div>
+
+
+        </div>
+    </form>
+</div>
+<hr style="border: none; border-top: 2px dotted #8c8b8b; background-color: transparent; height: 1px; margin: 1.5rem 0;">
+<div id="smcrecordchildlinelist">
+    <div class="text-center mb-10">
+    <div>
+        <h1 class="flex flex-row flex-nowrap items-center my-6">
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+            <span class="flex-none block mx-2 px-2 py-2 text-2xl font-medium uppercase bg-black text-white">
+        PMC RECORDED CHILDREN LINELIST
+    </span>
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+        </h1>
+    </div>
+</div>
+    <form id="editpmcstatus" action="/submit" method="POST" class="space-y-6 pt-6">
+    <div class="overflow-x-auto rounded-lg shadow border border-gray-300">
+        <table class="min-w-full divide-y divide-gray-200 text-gray-700 text-base md:text-lg">
+            <thead class="bg-gray-100 text-gray-900 uppercase font-semibold tracking-wide">
+            <tr>
+                <th class="px-4 py-3 text-left">Aic-ID</th>
+                <th class="px-4 py-3 text-left">AIC Name</th>
+                <th class="px-4 py-3 text-left">Team-ID</th>
+                <th class="px-4 py-3 text-left">Team Name</th>
+                <th class="px-4 py-3 text-left">Campaign Name</th>
+                <th class="px-4 py-3 text-left">Day</th>
+                <th class="px-4 py-3 text-left">House No.</th>
+                <th class="px-4 py-3 text-left">Child's name</th>
+                <th class="px-4 py-3 text-left">Father's name</th>
+                <th class="px-4 py-3 text-left">Gender</th>
+                <th class="px-4 py-3 text-left">Updated Age</th>
+                <th class="px-4 py-3 text-left">No. of missing rounds</th>
+                <th class="px-4 py-3 text-left">Address</th>
+                <th class="px-4 py-3 text-left">Missed Reason</th>
+                <th class="px-4 py-3 text-left">Sub Reason</th>
+                <th class="px-4 py-3 text-left">Location</th>
+                <th class="px-4 py-3 text-left">MMP</th>
+                <th class="px-4 py-3 text-left">Expected Date of Return</th>
+                <th class="px-4 py-3 text-left">Entered By</th>
+                <th class="px-4 py-3 text-left">Entry User</th>
+                <th class="px-4 py-3 text-left">Entry Time</th>
+                <th class="px-4 py-3 text-left">Previous PMC</th>
+                <th class="px-4 py-3 text-left">Reported PMC For</th>
+                <th class="px-4 py-3 text-left">Is Already PMC?</th>
+                <th class="px-4 py-3 text-left">Report as PMC</th>
+            </tr>
+            </thead>
+            <tbody id="childrenTableBody" class="divide-y divide-gray-200 bg-white">
+            <tr class="hover:bg-gray-50 transition-colors duration-150 text-base md:text-lg">
+                <td class="px-4 py-3">T-01</td>
+                <td class="px-4 py-3">1</td>
+                <td class="px-4 py-3">Ali Khan</td>
+                <td class="px-4 py-3">Campaign A</td>
+                <td class="px-4 py-3">Area Lead 1</td>
+                <td class="px-4 py-3">2</td>
+                <td class="px-4 py-3">H-101</td>
+                <td class="px-4 py-3">Sara Bibi</td>
+                <td class="px-4 py-3">Female</td>
+                <td class="px-4 py-3">48</td>
+                <td class="px-4 py-3">Khalid Bibi</td>
+                <td class="px-4 py-3">Street 12, Lahore</td>
+                <td class="px-4 py-3">1</td>
+                <td class="px-4 py-3">Refusal</td>
+                <td class="px-4 py-3">Religious</td>
+                <td class="px-4 py-3">Village 3</td>
+                <td class="px-4 py-3">HRMP-15</td>
+                <td class="px-4 py-3">05-09-2025</td>
+                <td class="px-4 py-3">Admin</td>
+                <td class="px-4 py-3 flex items-center gap-2">
+                  <input type="checkbox" id="pmccheked" class="w-8 h-8 accent-red-600 rounded border-gray-300 focus:ring-red-500">
+                </td>
+
+<!--                <td class="px-4 py-6">-->
+<!--                    &lt;!&ndash; Report PMC Dropdown &ndash;&gt;-->
+<!--                    <select name="report_pmc"-->
+<!--                            class="h-12 w-full rounded-lg border border-gray-300 px-3 text-base text-gray-800 shadow-sm"-->
+<!--                            onchange="toggleReason(this)">-->
+<!--                        <option value="" disabled selected>Report PMC</option>-->
+<!--                        <option value="Yes">Yes</option>-->
+<!--                        <option value="Excluded">Excluded</option>-->
+<!--                    </select>-->
+
+<!--                    &lt;!&ndash; Reason Dropdown, hidden by default &ndash;&gt;-->
+<!--                    <select name="excluded_reason"-->
+<!--                            class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-3 text-base text-gray-800 shadow-sm hidden">-->
+<!--                        <option value="" disabled selected>Reason</option>-->
+<!--                        <option value="Died">Died</option>-->
+<!--                        <option value="Overage">Overage</option>-->
+<!--                        <option value="Still Locked">Still Locked</option>-->
+<!--                    </select>-->
+<!--                </td>-->
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex justify-end pt-4">
+        <button id="submitbuttonsmc" type="submit"
+                class="px-5 py-3 flex items-center gap-2 rounded-lg bg-green-600 text-white font-semibold shadow hover:bg-green-700 text-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                <path d="M3 15h6"/>
+                <path d="M6 12v6"/>
+            </svg>
+            Update Data
+        </button>
+    </div>
+</form>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% include "partial_js_func/report_pmc_js.js" %}
+<script>
+    function toggleReason(selectElement) {
+        const reasonDropdown = selectElement.closest('td').querySelector('select[name="excluded_reason"]');
+        if (selectElement.value === 'Excluded') {
+            reasonDropdown.classList.remove('hidden');
+        } else {
+            reasonDropdown.classList.add('hidden');
+            reasonDropdown.value = "";
+        }
+    }
+</script>
+
+{% endblock %}

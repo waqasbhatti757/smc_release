@@ -1,0 +1,936 @@
+{% extends "base_header_main.html" %}
+{% load static %}
+
+{% block title %}Welcome To SMC Tracker{% endblock %}
+
+{% block content %}
+
+<div class="text-center my-6">
+    <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-green-400 via-green-500 to-green-600 bg-clip-text text-transparent drop-shadow-md">
+        Campaign Planning
+    </h1>
+    <div class="w-32 h-1 mx-auto mt-2 bg-green-500 rounded-full shadow-lg"></div>
+</div>
+<form action="#" method="POST" class="grid grid-cols-12 gap-4">
+    <div id="CampaignMain" x-data="{ campaignSelected: '' }" class="col-span-12 md:col-span-3">
+        <div>
+            <!-- Campaign Select Input -->
+            <div id="CampaignSelected" class="relative">
+
+                <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+                    Campaign <span class="text-red-600"></span>
+                </label>
+
+                <select id="campaignname" name="campaignname"
+                        class="h-16 w-full rounded-xl border border-gray-300 bg-white px-4 pr-10 text-[14px] text-gray-800 shadow-md transition-all ease-in-out focus:border-green-500 focus:ring-2 focus:ring-green-300 dark:border-gray-700 dark:bg-green-900 dark:text-white"
+                        @change="handleCampaignChange($event.target.value)"
+                >
+                    <option value="" disabled selected>Select</option>
+                    <!-- Options rendered from template -->
+                    {% for campaign in campaigns %}
+                    <option value="{{ campaign.idcampaign }}">{{ campaign.name }}</option>
+                    {% endfor %}
+                </select>
+
+            </div>
+        </div>
+    </div>
+    <div id="ProvinceMain" class="col-span-12 md:col-span-3">
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            Province <span class="text-red-600"></span>
+        </label>
+
+        <select id="provincename" name="provincename[]" multiple required></select>
+
+        <div style="display: flex; margin-top: -22px; margin-left:10px">
+            <label style="display: flex; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="selectAllProvinces" style="width: 14px; height: 14px;">
+                <span style="font-size: 12px; margin-top: 2px;">Select All Provinces</span>
+            </label>
+        </div>
+    </div>
+    <div id="ProvinceMainExcel" class="col-span-12 md:col-span-3">
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            Province (Excel) <span class="text-red-600"></span>
+        </label>
+
+        <select id="provincenameexcel" name="provincenameexcel[]" multiple required></select>
+
+        <div style="display: flex; margin-top: -22px; margin-left:10px">
+            <label style="display: flex; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="selectAllProvincesExcel" style="width: 14px; height: 14px;">
+                <span style="font-size: 12px; margin-top: 2px;">Select All Provinces (Excel)</span>
+            </label>
+        </div>
+    </div>
+    <div id="DivisionMain" class="col-span-12 md:col-span-3">
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            Division <span class="text-red-600"></span>
+        </label>
+
+        <select id="divisionname" name="divisionname[]" multiple required></select>
+
+        <div style="display: flex; margin-top: -22px; margin-left:10px">
+            <label style="display: flex; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="selectAllDivisions" style="width: 14px; height: 14px;">
+                <span style="font-size: 12px; margin-top: 2px;">Select All Divisions</span>
+            </label>
+        </div>
+    </div>
+    <div id="DivisionMainExcel" class="col-span-12 md:col-span-3">
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            Division (Excel) <span class="text-red-600"></span>
+        </label>
+
+        <select id="divisionnameexcel" name="divisionnameexcel[]" multiple required></select>
+
+        <div style="display: flex; margin-top: -22px; margin-left:10px">
+            <label style="display: flex; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="selectAllDivisionsExcel" style="width: 14px; height: 14px;">
+                <span style="font-size: 12px; margin-top: 2px;">Select All Divisions (Excel)</span>
+            </label>
+        </div>
+    </div>
+    <div id="DistrictMain" class="col-span-12 md:col-span-3">
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            District <span class="text-red-600"></span>
+        </label>
+
+        <select id="districtname" name="districtname[]" multiple required>
+        </select>
+        <div style="display: flex; margin-top: -22px; margin-left:10px">
+            <label style="display: flex; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="selectAllDistricts" style="width: 14px; height: 14px;">
+                <span style="font-size: 12px; margin-top: 2px;">Select All Districts</span>
+            </label>
+        </div>
+    </div>
+    <div id="DistrictMainExcel" class="col-span-12 md:col-span-3">
+        <label class="mb-1.5 block text-[12px] font-bold text-gray-700 dark:text-gray-400">
+            Excel Permission (District) <span class="text-red-600"></span>
+        </label>
+
+        <select id="districtnameexcel" name="districtnameexcel[]" multiple required>
+        </select>
+        <div style="display: flex; margin-top: -22px; margin-left:10px">
+            <label style="display: flex; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="selectAllDistrictsExcel" style="width: 14px; height: 14px;">
+                <span style="font-size: 12px; margin-top: 2px;">Select All Districts (Excel Upload)</span>
+            </label>
+        </div>
+    </div>
+    <div class="col-span-12 md:col-span-3 pt-10">
+        <button type="submit"
+                class="w-full bg-green-600 p-4 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+            Submit
+        </button>
+    </div>
+
+</form>
+<hr style="
+  border: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #16a34a, transparent);
+  margin: 20px 0;
+  border-radius: 2px;
+">
+<div class="w-full max-w-6xl mx-auto mt-6" id="displaytablestab" style="display: none;">
+    <!-- Fancy Tabs -->
+    <div class="border-b border-gray-300 dark:border-gray-600">
+        <nav class="flex justify-center space-x-10" id="tabs">
+            <!-- Active Districts -->
+            <button data-tab="districts"
+                    class="tab-btn flex items-center space-x-2 px-6 py-3 text-blue-600 border-b-4 border-blue-600 font-semibold text-md transition duration-300 ease-in-out hover:text-blue-500 hover:border-blue-500 focus:outline-none">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 20s-8-4.35-8-10a8 8 0 0116 0c0 5.65-8 10-8 10z"/>
+                </svg>
+                <span>Active Districts</span>
+            </button>
+
+            <!-- Excel Active Districts -->
+            <button data-tab="excel"
+                    class="tab-btn flex items-center space-x-2 px-6 py-3 text-gray-500 border-b-4 border-transparent font-medium text-md transition duration-300 ease-in-out hover:text-blue-500 hover:border-blue-500">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M4 4h16v2H4zm0 4h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/>
+                </svg>
+                <span>Excel Active Districts</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="mt-6">
+        <!-- Active Districts -->
+        <div id="tab-districts" class="tab-content">
+            <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+                <table class="w-full text-sm text-left text-gray-700">
+                    <thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm uppercase tracking-wide">
+                    <tr>
+                        <th class="px-6 py-3">Sr. #</th>
+                        <th class="px-6 py-3">Province</th>
+                        <th class="px-6 py-3">Division</th>
+                        <th class="px-6 py-3">District</th>
+                        <th class="px-6 py-3">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="districtsBody" class="divide-y divide-gray-200 bg-white"></tbody>
+                </table>
+                <div id="pagination-active" class="flex justify-center mt-4 space-x-2"></div>
+            </div>
+        </div>
+
+        <!-- Excel Active Districts -->
+        <div id="tab-excel" class="tab-content hidden">
+            <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+                <table class="w-full text-sm text-left text-gray-700">
+                    <thead class="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm uppercase tracking-wide">
+                    <tr>
+                        <th class="px-6 py-3">Sr. #</th>
+                        <th class="px-6 py-3">Province</th>
+                        <th class="px-6 py-3">Division</th>
+                        <th class="px-6 py-3">District</th>
+                        <th class="px-6 py-3">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="excelDistrictsBody" class="divide-y divide-gray-200 bg-white"></tbody>
+                </table>
+                <div id="pagination-excel" class="flex justify-center mt-4 space-x-2"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+<script type="module">
+    import { API_BASE_URL } from "/static/apiConfig.js";
+    window.API_BASE_URL = API_BASE_URL;
+</script>
+
+<script>
+    // 🔹 Reusable table renderer
+    function renderTable(data, tbodyId, paginationId, rowsPerPage = 5) {
+        let currentPage = 1;
+        const tbody = document.getElementById(tbodyId);
+        const pagination = document.getElementById(paginationId);
+
+        function renderPage(page) {
+            tbody.innerHTML = "";
+            let start = (page - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            let paginatedData = data.slice(start, end);
+
+            paginatedData.forEach((row, index) => {
+                tbody.innerHTML += `
+                <tr class="hover:bg-gray-50 transition duration-200">
+                    <td class="px-6 py-4 font-semibold text-gray-800">${start + index + 1}</td>
+                    <td class="px-6 py-4">${row.province_name}</td>
+                    <td class="px-6 py-4">${row.division_name}</td>
+                    <td class="px-6 py-4">${row.district_name}</td>
+                    <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">Active</span></td>
+                </tr>
+            `;
+            });
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            pagination.innerHTML = "";
+            const pageCount = Math.ceil(data.length / rowsPerPage);
+
+            // Prev button
+            const prevBtn = document.createElement("button");
+            prevBtn.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>`;
+            prevBtn.className = `px-3 py-2 rounded-md border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50`;
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            });
+            pagination.appendChild(prevBtn);
+
+            // Next button
+            const nextBtn = document.createElement("button");
+            nextBtn.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>`;
+            nextBtn.className = `px-3 py-2 rounded-md border bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50`;
+            nextBtn.disabled = currentPage === pageCount;
+            nextBtn.addEventListener("click", () => {
+                if (currentPage < pageCount) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
+            });
+            pagination.appendChild(nextBtn);
+        }
+
+        renderPage(currentPage);
+    }
+
+    // 🔹 Fetch and load campaign details
+    async function loadCampaignDetails(idcampaign) {
+        try {
+            // API call
+            const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/${idcampaign}/details`);
+            if (!response.ok) throw new Error("Failed to fetch campaign details");
+
+            const result = await response.json();
+            document.getElementById("displaytablestab").style.display = "block";
+            // Render tables
+            renderTable(result["Active UC's"], "districtsBody", "pagination-active");
+            renderTable(result["Excel Active UC's"], "excelDistrictsBody", "pagination-excel");
+
+
+        } catch (error) {
+            console.error("❌ Error loading campaign details:", error);
+            Swal.fire({
+                title: "Error",
+                text: "Unable to load campaign data. Please try again.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+        }
+    }
+
+    // 🔹 Tab switching
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            // reset all tabs
+            document.querySelectorAll(".tab-btn").forEach(b => {
+                b.classList.remove("text-blue-600", "border-blue-600", "font-semibold");
+                b.classList.add("text-gray-500", "border-transparent", "font-medium");
+            });
+            document.querySelectorAll(".tab-content").forEach(c => c.classList.add("hidden"));
+
+            // activate clicked
+            btn.classList.add("text-blue-600", "border-blue-600", "font-semibold");
+            btn.classList.remove("text-gray-500", "border-transparent", "font-medium");
+
+            const target = btn.getAttribute("data-tab");
+            document.getElementById("tab-" + target).classList.remove("hidden");
+        });
+    });
+
+</script>
+
+<script>
+    function initChoicesGeneric({
+                                    elementId,
+                                    data = [],
+                                    preselected = [],
+                                    limit = -1, // -1 means no limit
+                                    selectAllCheckboxId = null,
+                                    disableSelectAll = false,
+                                    label = "Item", // e.g. District, Division, Province
+                                    logPrefix = ""  // e.g. Excel, ZD, Province etc.
+                                }) {
+        const selectEl = document.getElementById(elementId);
+        if (!selectEl) return;
+        if (selectEl.choicesInstance) {
+            try {
+                selectEl.choicesInstance.destroy();
+            } catch (e) {
+                console.warn("Choices destroy failed:", e);
+            }
+            selectEl.choicesInstance = null;
+        }
+        // clear existing options
+        selectEl.innerHTML = "";
+
+        // render options
+        data.forEach(item => {
+            const opt = document.createElement("option");
+            opt.value = item.value;
+            opt.textContent = item.label;
+            if (item.disabled) opt.disabled = true;
+            selectEl.appendChild(opt);
+        });
+
+        // init Choices.js
+        const choices = new Choices(selectEl, {
+            removeItemButton: true,
+            shouldSort: false,
+            placeholder: true,
+            placeholderValue: `Select ${label}(s)`,
+            noResultsText: `No ${label}s found`,
+            noChoicesText: `No ${label}s available`,
+            itemSelectText: '',
+            maxItemCount: limit > 0 ? limit : -1,
+        });
+
+        // apply preselected values
+
+        selectEl.choicesInstance = choices;
+        if (Array.isArray(preselected) && preselected.length > 0) {
+            try {
+                choices.setChoiceByValue(preselected);
+            } catch (e) {
+                console.warn("setChoiceByValue failed:", e);
+            }
+        }
+
+        // set background styles
+        setTimeout(() => {
+            const container = selectEl.closest('.choices');
+            if (container) {
+                const inner = container.querySelector('.choices__inner');
+                const dropdown = container.querySelector('.choices__list--dropdown');
+                if (inner) inner.style.backgroundColor = '#ffffff';
+                if (dropdown) dropdown.style.backgroundColor = '#ffffff';
+            }
+        }, 1);
+
+        // track selected values
+        let selectedValues = [];
+        const updateSelectedValues = () => {
+            selectedValues = choices.getValue(true); // array of values
+        };
+
+        selectEl.addEventListener("change", updateSelectedValues);
+        updateSelectedValues(); // initialize with preselected
+
+        // handle "Select All"
+        if (selectAllCheckboxId) {
+            const selectAllCheckbox = document.getElementById(selectAllCheckboxId);
+            if (selectAllCheckbox) {
+                if (disableSelectAll) {
+                    selectAllCheckbox.disabled = true; // disable only if param says so
+                }
+                selectAllCheckbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        const allValues = Array.from(selectEl.options)
+                            .filter(opt => opt.value && !opt.disabled)
+                            .map(opt => opt.value);
+                        choices.setChoiceByValue(allValues);
+                    } else {
+                        choices.removeActiveItems();
+                    }
+                    updateSelectedValues();
+                });
+            }
+        }
+
+        return {choices, getSelected: () => selectedValues};
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const initDistrictChoices = (opts) => initChoicesGeneric({...opts, label: "District", logPrefix: "District"});
+        const initDistrictChoicesExcel = (opts) => initChoicesGeneric({
+            ...opts,
+            label: "District",
+            logPrefix: "Excel District"
+        });
+        const initProvinceChoicesExcel = (opts) =>
+            initChoicesGeneric({...opts, label: "Province", logPrefix: "Province Excel"});
+
+        const initDivisionChoicesExcel = (opts) =>
+            initChoicesGeneric({...opts, label: "Division", logPrefix: "Division Excel"});
+
+        const initDivisionChoices = (opts) => initChoicesGeneric({...opts, label: "Division", logPrefix: "Division"});
+        const initProvinceChoices = (opts) => initChoicesGeneric({...opts, label: "Province", logPrefix: "Province"});
+
+
+    });
+</script>
+<script>
+    async function fetchCampaignLocations(idcampaign, type_field = "string") {
+        try {
+            const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/locations`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'accept': 'application/json'
+                },
+                body: JSON.stringify({idcampaign, type_field})
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching campaign locations:", error);
+            return null; // or return {} / [] depending on your usage
+        }
+    }
+
+    async function fetchCampaignProvinces(campaignId) {
+        try {
+            const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/${campaignId}/provinces`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.status === "success" && Array.isArray(data.provinces)) {
+                return data.provinces.map(p => ({
+                    value: p.code,
+                    label: p.name
+                }));
+            } else {
+                console.error("Invalid response or no provinces found");
+                return [];
+            }
+        } catch (error) {
+            console.error("Error fetching provinces:", error);
+            return [];
+        }
+    }
+
+    async function fetchDivisions(idcampaign, ids) {
+        try {
+            const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/divisions`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    idcampaign,
+                    ids
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.divisions.map(p => ({
+                value: p.code,
+                label: p.dname
+            }));
+
+        } catch (error) {
+            console.error('Error fetching divisions:', error);
+            return null;
+        }
+    }
+
+    async function fetchDistricts(idcampaign, ids) {
+        try {
+            const response = await fetch(`${window.API_BASE_URL}/campaign/campaign/districts`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ idcampaign, ids })
+        });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.districts.map(p => ({
+                value: p.code,
+                label: p.dname
+            }));
+
+        } catch (error) {
+            console.error('Error fetching districts:', error);
+            return null;
+        }
+    }
+
+
+    async function settheinfo(Fetch, locationsFetch, element, checkelement, whichtag) {
+        const [Data, locationData] = await Promise.all([Fetch, locationsFetch]);
+        let preselected = [];
+
+        if (whichtag === "provinces") {
+            preselected = locationData?.provinces?.map(p => p.code.toString()) || [];
+        } else if (whichtag === "divisions") {
+            preselected = locationData?.divisions?.map(p => p.code.toString()) || [];
+        } else if (whichtag === "districts") {
+            preselected = locationData?.districts?.map(p => p.dcode.toString()) || [];
+        }
+
+        return new Promise(resolve => {
+            const instance = initChoicesGeneric({
+                elementId: element,
+                data: Data,
+                preselected: preselected,
+                limit: -1,
+                selectAllCheckboxId: checkelement,
+                disableSelectAll: false,
+                label: whichtag === "provinces" ? "Province" : "Division",
+                logPrefix: "Campaign"
+            });
+
+            // Wait one tick to ensure Choices populates preselected values
+            setTimeout(() => resolve(instance), 0);
+        });
+    }
+
+
+</script>
+<script>
+    async function handleCampaignChange(campaignId) {
+        loadCampaignDetails(campaignId);
+        const provincesFetch = await fetchCampaignProvinces(campaignId);
+        const locationsFetch = await fetchCampaignLocations(campaignId, "string");
+        const locationsFetchexcel = await fetchCampaignLocations(campaignId, "EXCEL");
+
+        // Initialize provinces
+        const provinceInstance = await settheinfo(provincesFetch, locationsFetch, "provincename", "selectAllProvinces", "provinces");
+        const provinceExcelInstance = await settheinfo(provincesFetch, locationsFetchexcel, "provincenameexcel", "selectAllProvincesExcel", "provinces");
+
+        // Get selected province values
+        const provincenameValues = provinceInstance.getSelected();
+        const provincenameExcelValues = provinceExcelInstance.getSelected();
+
+
+        const divisions = await fetchDivisions(campaignId, provincenameValues);
+
+        // Initialize divisions
+        const divisionInstance = await settheinfo(divisions, locationsFetch, "divisionname", "selectAllDivisions", "divisions");
+        const divisionExcelInstance = await settheinfo(divisions, locationsFetchexcel, "divisionnameexcel", "selectAllDivisionsExcel", "divisions");
+        const divisionnameValues = divisionInstance.getSelected();
+        const divisionnameExcelValues = divisionExcelInstance.getSelected();
+        const districts = await fetchDistricts(campaignId, divisionnameValues);
+        const a = await settheinfo(districts, locationsFetch, "districtname", "selectAllDistricts", "districts");
+        const b = await settheinfo(districts, locationsFetchexcel, "districtnameexcel", "selectAllDistrictsExcel", "districts");
+    }
+</script>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectEl = document.getElementById('provincename');
+        if (!selectEl) return;
+
+        // Initialize Choices.js only if not already
+        const provinceChoices = selectEl.choicesInstance || new Choices(selectEl, {
+            removeItemButton: true,
+            shouldSort: false
+        });
+        selectEl.choicesInstance = provinceChoices;
+
+        // Ensure preselected options are recognized
+        const preselectedValues = Array.from(selectEl.options)
+            .filter(opt => opt.selected)
+            .map(opt => opt.value);
+        if (preselectedValues.length > 0) {
+            provinceChoices.setChoiceByValue(preselectedValues);
+        }
+
+        // Function to handle province changes
+        const handleProvinceChange = async () => {
+            const selectedValues = provinceChoices.getValue(true); // get all selected
+            const select = document.getElementById('provincename');
+            const provincenameValues = Array.from(select.selectedOptions).map(option => option.value);
+
+            const campaignIdEl = document.getElementById('campaignname');
+            if (!campaignIdEl) return;
+            const campaignId = parseInt(campaignIdEl.value, 10);
+            if (isNaN(campaignId)) {
+                console.error("Invalid campaign ID:", campaignIdEl.value);
+                return;
+            }
+
+            const locationsFetch = await fetchCampaignLocations(campaignId, "string");
+            const locationsFetchexcel = await fetchCampaignLocations(campaignId, "EXCEL");
+            const divisions = await fetchDivisions(campaignId, provincenameValues);
+            await settheinfo(divisions, locationsFetch, "divisionname", "selectAllDivisions", "divisions");
+        };
+
+        // Listen to add/remove events from Choices
+        selectEl.addEventListener('addItem', handleProvinceChange);
+        selectEl.addEventListener('removeItem', handleProvinceChange);
+
+        // Trigger once for initial state
+        handleProvinceChange();
+    });
+
+</script>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectEls = document.getElementById('provincenameexcel');
+        if (!selectEls) return;
+
+        // Initialize Choices.js only if not already
+        const provinceChoicesExcel = selectEls.choicesInstance || new Choices(selectEls, {
+            removeItemButton: true,
+            shouldSort: false
+        });
+        selectEls.choicesInstance = provinceChoicesExcel;
+
+        // Ensure preselected options are recognized
+        const preselectedValuesExcel = Array.from(selectEls.options)
+            .filter(opt => opt.selected)
+            .map(opt => opt.value);
+        if (preselectedValuesExcel.length > 0) {
+            provinceChoicesExcel.setChoiceByValue(preselectedValuesExcel);
+        }
+
+        // Function to handle province changes
+        const handleProvinceChange = async () => {
+            const selectedValues = provinceChoicesExcel.getValue(true); // get all selected
+            const select = document.getElementById('provincenameexcel');
+            const provincenameValues = Array.from(select.selectedOptions).map(option => option.value);
+
+            const campaignIdEl = document.getElementById('campaignname');
+            if (!campaignIdEl) return;
+            const campaignId = parseInt(campaignIdEl.value, 10);
+            if (isNaN(campaignId)) {
+                console.error("Invalid campaign ID:", campaignIdEl.value);
+                return;
+            }
+
+            const locationsFetch = await fetchCampaignLocations(campaignId, "string");
+            const locationsFetchexcel = await fetchCampaignLocations(campaignId, "EXCEL");
+            const divisions = await fetchDivisions(campaignId, provincenameValues);
+            await settheinfo(divisions, locationsFetchexcel, "divisionnameexcel", "selectAllDivisionsExcel", "divisions");
+
+        };
+
+        // Listen to add/remove events from Choices
+        selectEls.addEventListener('addItem', handleProvinceChange);
+        selectEls.addEventListener('removeItem', handleProvinceChange);
+
+        // Trigger once for initial state
+        handleProvinceChange();
+    });
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const divisionSelect = document.getElementById('divisionname');
+        const districtSelect = document.getElementById('districtname');
+        if (!divisionSelect) return;
+        if (!districtSelect) return;
+
+        // Initialize Choices.js only if not already
+        const divisionChoicesInstance = divisionSelect.choicesInstance || new Choices(divisionSelect, {
+            removeItemButton: true,
+            shouldSort: false
+        });
+        divisionSelect.choicesInstance = divisionChoicesInstance;
+
+        // Ensure preselected options are recognized
+        const preselectedDivisionValues = Array.from(divisionSelect.options)
+            .filter(option => option.selected)
+            .map(option => option.value);
+        if (preselectedDivisionValues.length > 0) {
+            divisionChoicesInstance.setChoiceByValue(preselectedDivisionValues);
+        }
+
+        // Function to handle division changes
+        const handleDivisionSelectionChange = async () => {
+            const selectedDivisionValues = Array.from(divisionSelect.selectedOptions).map(option => option.value);
+
+            const campaignInput = document.getElementById('campaignname');
+            if (!campaignInput) return;
+
+            const campaignId = parseInt(campaignInput.value, 10);
+            if (isNaN(campaignId)) {
+                console.error("Invalid campaign ID:", campaignInput.value);
+                return;
+            }
+
+
+            const locationsData = await fetchCampaignLocations(campaignId, "string");
+            const divisionsData = await fetchDistricts(campaignId, selectedDivisionValues);
+            await settheinfo(divisionsData, locationsData, "districtname", "selectAllDistricts", "districts");
+        };
+
+        // Listen to add/remove events from Choices
+        divisionSelect.addEventListener('addItem', handleDivisionSelectionChange);
+        divisionSelect.addEventListener('removeItem', handleDivisionSelectionChange);
+
+        // Trigger once for initial state
+        handleDivisionSelectionChange();
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const districtSelect = document.getElementById('districtname');
+        const districtExcelSelect = document.getElementById('districtnameexcel');
+
+        if (districtSelect) {
+            // Initialize Choices.js only if not already
+            const districtChoicesInstance = districtSelect.choicesInstance || new Choices(districtSelect, {
+                removeItemButton: true,
+                shouldSort: false
+            });
+            districtSelect.choicesInstance = districtChoicesInstance;
+
+            // Ensure preselected options are recognized
+            const preselectedDistrictValues = Array.from(districtSelect.options)
+                .filter(option => option.selected)
+                .map(option => option.value);
+
+            if (preselectedDistrictValues.length > 0) {
+                districtChoicesInstance.setChoiceByValue(preselectedDistrictValues);
+            }
+        }
+
+        if (districtExcelSelect) {
+            // Initialize Choices.js only if not already
+            const districtExcelChoicesInstance = districtExcelSelect.choicesInstance || new Choices(districtExcelSelect, {
+                removeItemButton: true,
+                shouldSort: false
+            });
+            districtExcelSelect.choicesInstance = districtExcelChoicesInstance;
+
+            // Ensure preselected options are recognized
+            const preselectedDistrictExcelValues = Array.from(districtExcelSelect.options)
+                .filter(option => option.selected)
+                .map(option => option.value);
+
+            if (preselectedDistrictExcelValues.length > 0) {
+                districtExcelChoicesInstance.setChoiceByValue(preselectedDistrictExcelValues);
+            }
+        }
+        const divisionExcelSelect = document.getElementById('divisionnameexcel');
+        if (!divisionExcelSelect) return;
+
+        // Initialize Choices.js only if not already
+        const divisionExcelChoicesInstance = divisionExcelSelect.choicesInstance || new Choices(divisionExcelSelect, {
+            removeItemButton: true,
+            shouldSort: false
+        });
+        divisionExcelSelect.choicesInstance = divisionExcelChoicesInstance;
+
+        // Ensure preselected options are recognized
+        const preselectedDivisionExcelValues = Array.from(divisionExcelSelect.options)
+            .filter(option => option.selected)
+            .map(option => option.value);
+        if (preselectedDivisionExcelValues.length > 0) {
+            divisionExcelChoicesInstance.setChoiceByValue(preselectedDivisionExcelValues);
+        }
+
+        // Function to handle division changes
+        const handleDivisionExcelSelectionChange = async () => {
+            const selectedDivisionExcelValues = Array.from(divisionExcelSelect.selectedOptions).map(option => option.value);
+
+            const campaignInput = document.getElementById('campaignname');
+            if (!campaignInput) return;
+
+            const campaignId = parseInt(campaignInput.value, 10);
+            if (isNaN(campaignId)) {
+                console.error("Invalid campaign ID:", campaignInput.value);
+                return;
+            }
+
+
+            const locationsExcelData = await fetchCampaignLocations(campaignId, "EXCEL");
+            const divisionsExcelData = await fetchDistricts(campaignId, selectedDivisionExcelValues);
+            await settheinfo(divisionsExcelData, locationsExcelData, "districtnameexcel", "selectAllDistrictsExcel", "districts");
+        };
+
+        // Listen to add/remove events from Choices
+        divisionExcelSelect.addEventListener('addItem', handleDivisionExcelSelectionChange);
+        divisionExcelSelect.addEventListener('removeItem', handleDivisionExcelSelectionChange);
+
+        // Trigger once for initial state
+        handleDivisionExcelSelectionChange();
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelector("button[type='submit']").addEventListener("click", async function (e) {
+        e.preventDefault(); // prevent reload
+
+        const campaignValue = document.getElementById("campaignname").value;
+        const selectedProvinceValues = Array.from(document.getElementById("provincename").selectedOptions).map(o => o.value);
+        const selectedProvinceExcelValues = Array.from(document.getElementById("provincenameexcel").selectedOptions).map(o => o.value);
+        const selectedDivisionValues = Array.from(document.getElementById("divisionname").selectedOptions).map(o => o.value);
+        const selectedDivisionExcelValues = Array.from(document.getElementById("divisionnameexcel").selectedOptions).map(o => o.value);
+        const selectedDistrictValues = Array.from(document.getElementById("districtname").selectedOptions).map(o => o.value);
+        const selectedDistrictExcelValues = Array.from(document.getElementById("districtnameexcel").selectedOptions).map(o => o.value);
+
+        const formData = {
+            campaign: campaignValue,
+            provinces: selectedProvinceValues,
+            provincesExcel: selectedProvinceExcelValues,
+            divisions: selectedDivisionValues,
+            divisionsExcel: selectedDivisionExcelValues,
+            districts: selectedDistrictValues,
+            districtsExcel: selectedDistrictExcelValues
+        };
+
+        Swal.fire({
+            title: 'Processing...',
+            text: 'Please wait while we save your data.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            const response = await fetch("{% url 'campaign_planning:campaign_planning' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")  // required for Django
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+            console.log("✅ Response from Django:", result);
+
+            // Close loading
+            Swal.close();
+
+            // Show result
+            await Swal.fire({
+                title: 'Result',
+                html: `<pre style="text-align:left">${result['msg']}</pre>`,
+                icon: 'success'
+            });
+
+            // Reload the page after user closes Swal
+            location.reload();
+
+        } catch (error) {
+            Swal.close();
+            console.error("❌ Error sending data:", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'There was an error sending the data. Please try again.',
+                icon: 'error'
+            });
+        }
+    });
+
+    // Utility to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+</script>
+
+{% endblock %}

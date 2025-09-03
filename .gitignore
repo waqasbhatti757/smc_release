@@ -14,7 +14,13 @@ env/
 *.env
 
 # IDE/editor settings
-.vscode/
+.ke git forget already tracked ignored files
+git rm -r --cached .
+git add .
+git commit -m "Applied clean .gitignore and removed ignored files"
+git push origin main
+
+vscode/
 .idea/
 *.swp
 

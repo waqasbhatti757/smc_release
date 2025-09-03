@@ -1,0 +1,51 @@
+{% extends "base_header_main.html" %}
+{% load static %}
+
+{% block title %}Welcome To SMC Tracker{% endblock %}
+
+{% block content %}
+<!-- Modal (Always visible on page load) -->
+<div x-data="{ showModal: true }">
+    <div x-show="showModal" x-transition
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg text-center space-y-6">
+            <h2 class="text-3xl font-bold text-gray-800">Please Report Your Previous Campaign PMC's</h2>
+            <p class="text-gray-600">Select one of the options below:</p>
+
+            <div class="flex justify-center gap-4 mt-6">
+                <!-- Yes Button -->
+                <button @click="window.location.href='/campaign_data/report-pmc/'"
+                        class="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition">
+                    Proceed
+                </button>
+
+
+                <!-- Don't Found Button -->
+                <button @click="showModal = false"
+                        class="bg-gray-600 text-white px-6 py-3 rounded-xl hover:bg-gray-700 transition">
+                    Don't Found
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mb-10">
+    <div>
+        <h1 class="flex flex-row flex-nowrap items-center my-6">
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+            <span class="flex-none block mx-2 px-4 py-2 text-4xl font-medium uppercase bg-black text-white">
+        ADD STILL MISSED CHILDREN INFORMATION
+    </span>
+            <span class="flex-grow block border-t border-black" aria-hidden="true" role="presentation"></span>
+        </h1>
+    </div>
+
+</div>
+{% include "partial_template/smc_form.html" %}
+{% endblock %}
+
+{% block extra_js %}
+{% include "partial_js_func/add_smc_form_js.js" %}
+{% endblock %}
