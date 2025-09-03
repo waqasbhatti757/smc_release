@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Celery + WebSocket Live Data</title>
+</head>
+<body>
+  <h1>Start Task</h1>
+  <button onclick="startTask()">Start</button>
+  <p id="output"></p>
+
+  <script>
+    function startTask() {
+      fetch("/trigger-task/", { method: "POST" })
+        .then(response => response.json())
+        .then(data => {
+          const taskId = data.task_id;
+          console.log("Task ID:", taskId);
+
+          const ws = new WebSocket(`ws://localhost:8000/ws/${taskId}`);
+
+          ws.onmessage = function(event) {
+            const result = JSON.parse(event.data);
+            document.getElementById("output").innerText = result.data;
+          };
+        });
+    }
+  </script>
+</body>
+</html>

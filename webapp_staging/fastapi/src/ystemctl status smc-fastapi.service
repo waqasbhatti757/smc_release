@@ -1,0 +1,5 @@
+● smc-django.service - SMC Django Web Application
+   Loaded: loaded (/etc/systemd/system/smc-django.service; enabled; vendor preset: disabled)
+   Active: activating (auto-restart) (Result: exit-code) since Sun 2025-08-31 16:58:32 PKT; 1s ago
+  Process: 1583622 ExecStart=/opt/smc_webapp/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 --access-logfile /var/log/smc/django_access.log --error-logfile /var/log/smc/django_error.log smc_tracker.wsgi:application [0;1;31m(code=exited, status=203/EXEC)[0m
+ Main PID: 1583622 (code=exited, status=203/EXEC)

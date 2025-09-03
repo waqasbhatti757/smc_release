@@ -1,0 +1,5 @@
+Requirement already up-to-date: sqlalchemy in ./venv/lib/python3.6/site-packages
+Requirement already up-to-date: greenlet!=0.4.17; python_version >= "3" and (platform_machine == "aarch64" or (platform_machine == "ppc64le" or (platform_machine == "x86_64" or (platform_machine == "amd64" or (platform_machine == "AMD64" or (platform_machine == "win32" or platform_machine == "WIN32")))))) in ./venv/lib/python3.6/site-packages (from sqlalchemy)
+Requirement already up-to-date: importlib-metadata; python_version < "3.8" in ./venv/lib/python3.6/site-packages (from sqlalchemy)
+Requirement already up-to-date: typing-extensions>=3.6.4; python_version < "3.8" in ./venv/lib/python3.6/site-packages (from importlib-metadata; python_version < "3.8"->sqlalchemy)
+Requirement already up-to-date: zipp>=0.5 in ./venv/lib/python3.6/site-packages (from importlib-metadata; python_version < "3.8"->sqlalchemy)

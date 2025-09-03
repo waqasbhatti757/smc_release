@@ -1,0 +1,529 @@
+body {
+    width: 100%;
+    height: 100%;
+	font-family: 'Droid Sans', sans-serif;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+
+}
+.paddingnone{
+	padding:0px !important;
+}
+.custom-panel {
+    border: 1px solid #CCCBCB;
+    border-radius: 4px;
+    margin-top: 18px;
+    min-height: 100px;
+}
+.panel-header {
+    background: #008743;
+    padding: 10px 10px;
+    border-radius: 4px 4px 0px 0px;
+}
+.small, small {
+    font-size: 70%;
+}
+.panel-header h3 {
+    margin: 0px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #FFFFFF;
+    font-family: 'Droid Sans', sans-serif;
+    text-align: left;
+    text-transform: uppercase;
+}
+.planed-uc {
+    float: left;
+    width: 49%;
+    text-align: Left;
+    text-indent: 0px;
+	border-right: 1px dotted #778F9C;
+    font-size: 20px;
+}
+.reported-uc {
+    float: right;
+    width: 49%;
+    font-size: 18px;
+}
+.reported-uc span{
+	float: right;
+	width:100%;
+}
+.custom-panel .panel-body {
+    text-align: left;
+}
+.custom-panel .planned-reported span {
+    font-size: 35px;
+    float: left;
+	width: 100%;
+	margin-top:0px;
+
+    font-family: 'Orbitron', sans-serif;
+}
+.custom-panel .panel-body ul li {
+    list-style: none;
+    padding: 7px 0px 8px;
+    border-bottom: 1px dotted #CCCBCB;
+    font-size: 14px;
+    background: url("../img/arrow_right.png");
+    background-size: 20px 16px;
+    background-repeat: no-repeat;
+    background-position: -8px 13px;
+    padding-left: 15px;
+}
+.custom-panel .panel-body ul li:first-child{
+	padding-top:0px;
+	color:#ff0000;
+	background-position: -8px 2px;
+}
+.custom-panel .panel-body ul li:nth-child(2){
+	color:#bf0000;
+}
+.custom-panel .panel-body ul li:nth-child(3){
+	color:#800000;
+}
+.custom-panel .panel-body ul li:nth-child(4){
+	color:#400000;
+}
+.custom-panel .panel-body ul li span{
+    float:right;
+	font-family:'Orbitron', sans-serif;
+	font-size:18px;
+}
+.custom-panel .panel-body ul{
+    padding: 0px;
+}
+.title b {
+    color: #F1EFEF;
+    font-family: "Bree Serif",serif;
+    font-size: 27px;
+    margin-right: 10px;
+    font-weight: 500;
+    line-height: 57px;
+}
+.date {
+    color: #F1EFEF;
+    font-family: "Bree Serif",serif;
+    font-size:18px;
+    font-weight: 500;
+}
+.campaing-date {
+    float: right;
+    width: 100%;
+    text-align: right;
+}
+.title {
+    color: #fff;
+    font-size: 15px;
+}
+.status {
+    float: left;
+}
+.navbar-default {
+    border-color: #000000;
+    box-shadow: rgba(14, 82, 41, 0.42) -4px 0px 47px inset;
+    background: #144121; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#144121, #008743); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#144121, #008743); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#144121, #008743); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#144121, #008743); /* Standard syntax (must be last) */
+}
+@media(min-width:767px) {
+    .navbar {
+        padding: 8px 0;
+        -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
+        -moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
+        transition: background .5s ease-in-out,padding .5s ease-in-out;
+    }
+
+    .top-nav-collapse {
+        padding: 0;
+    }
+}
+.status-full{
+	width:100%;
+	text-align:center;
+}
+.intro-section {
+    height: 100%;
+    padding-top: 65px;
+    text-align: center;
+    background: #fff;
+}
+#date-large b, #date-large {
+    font-family: 'Droid Sans', sans-serif;
+    letter-spacing: 0;
+    font-size: 14px;
+}
+
+
+#clock-large {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    text-shadow: 0px 0px 1px #fff;
+    color: #fff;
+    margin-top: 0px;
+    float: right;
+    margin-left: 10px;
+}
+#clock-large span {
+	color:#ddd;
+	text-shadow:0px 0px 1px #333;
+	font-size:13px;
+	position:relative;
+	font-weight:bold;
+	top:0px;
+	left:-2px;
+}
+#date-large {
+    letter-spacing: 0px;
+    font-size: 14px;
+    font-family: arial,sans-serif;
+    color: #fff;
+    float: left;
+    padding-top: 12px;
+    margin-left: 10px;
+}
+
+.credit { position:fixed; bottom:10px;right:10px; color:#aaa; font-size:13px;font-family:arial,sans-serif; }
+.credit a { text-decoration:none; color:#f8f8f8; font-weight:bold; }
+.credit a:hover { border-bottom:1px dotted #f8f8f8; }
+.full {
+    width: 100% !important;
+    float: left !important;
+    text-align: left !important;
+    border: none;
+    border-bottom: 1px dotted #CCCBCB;
+    margin-bottom: 11px;
+}
+
+.still-missed .count {
+    float: left;
+    font-size: 17px;
+    border-right: 1px dotted #CCCBCB;
+    text-align: center;
+}
+.still-missed .count:last-child{
+	border:none;
+}
+.panel-body.still-missed {
+    padding: 12px 0px 13px;
+}
+.still-missed .count span {
+    font-size: 20px;
+    float: left;
+    width: 100%;
+    margin-top: 0px;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+}
+.full:last-child{
+	border-bottom:none;
+}
+.full span {
+    width: 100% !important;
+    float: left !important;
+    margin: -1.7px 0px !important;
+    text-align: left !important;
+}
+.danger{
+color:#FF0000;
+}
+.dangerheader{
+background:#D02C2C;
+}
+.green{
+color:#008743;
+}
+.proname{
+	font-size:11px !important;
+}
+#uclist{
+	margin-bottom: 3px;
+}
+/* general style for the form */
+.nl-form {
+  width: 100%;
+  margin: 12px 9px 5px 10px;
+  font-size: 1em;
+  line-height: 1.5;
+}
+.nl-form ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* normalize the input elements, make them look like everything else */
+.nl-form input,
+.nl-form select,
+.nl-form button {
+	border: none;
+	background: transparent;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+.nl-form input:focus {
+	outline: none;
+}
+
+/* custom field (drop-down, text element) styling  */
+.nl-field {
+	display: inline-block;
+	position: relative;
+}
+
+.nl-field.nl-field-open {
+	z-index: 10000;
+}
+
+/* the toggle is the visible part in the form */
+.nl-field-toggle, .nl-form input, .nl-form select {
+  line-height: inherit;
+  display: inline-block;
+  color: #FFF;
+  cursor: pointer;
+  font-size: 27px;
+  font-family: "Bree Serif",serif;
+  width: 100%;
+}
+.nl-field-toggle:hover {
+    color: inherit;
+    text-decoration: underline;
+}
+/* drop-down list / text element */
+.nl-field.nl-dd + select + .nl-field.nl-dd ul {
+    top: 200px;
+}
+.nl-field.nl-dd ul{
+    position: absolute;
+	visibility: hidden;
+	background: #76C3BD;
+	left: 0.1em;
+	top: 90px;
+	font-size: 80%;
+	opacity: 0;
+	-webkit-transform: translateY(-40%) scale(0.9);
+	-moz-transform: translateY(-40%) scale(0.9);
+	transform: translateY(-40%) scale(0.9);
+	-webkit-transition: visibility 0s 0.3s, opacity 0.3s, -webkit-transform 0.3s;
+	-moz-transition: visibility 0s 0.3s, opacity 0.3s, -moz-transform 0.3s;
+	transition: visibility 0s 0.3s, opacity 0.3s, transform 0.3s;
+}
+
+.nl-field.nl-field-open ul {
+	visibility: visible;
+	opacity: 1;
+	-webkit-transform: translateY(-50%) scale(1);
+	-moz-transform: translateY(-50%) scale(1);
+	transform: translateY(-50%) scale(1);
+	-webkit-transition: visibility 0s 0s, opacity 0.3s, -webkit-transform 0.3s;
+	-moz-transition: visibility 0s 0s, opacity 0.3s, -moz-transform 0.3s;
+	transition: visibility 0s 0s, opacity 0.3s, transform 0.3s;
+}
+
+.nl-field ul li {
+	color: #fff;
+	position: relative;
+}
+
+.nl-dd ul li {
+    padding: 2px 15px;
+    cursor: pointer;
+    white-space: nowrap;
+    text-align: left;
+    font-size: 11px;
+    min-width: 150px;
+}
+
+
+.nl-dd ul li.nl-dd-checked {
+	color: #478982;
+}
+
+.no-touch .nl-dd ul li:hover {
+	background: rgba(0,0,0,0.05);
+}
+
+.no-touch .nl-dd ul li:hover:active {
+	color: #478982;
+}
+
+/* icons for some elements */
+.nl-dd ul li.nl-dd-checked:before,
+.nl-submit:before,
+.nl-field-go:before {
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	-webkit-font-smoothing: antialiased;
+}
+
+.nl-dd ul li.nl-dd-checked:before {
+	content: "\e000";
+	position: absolute;
+	right: 1em;
+	font-size: 50%;
+	line-height: 3;
+}
+
+.nl-ti-text ul {
+	min-width: 8em;
+}
+
+.nl-ti-text ul li.nl-ti-input input {
+	width: 100%;
+	padding: 0.2em 2em 0.2em 0.5em;
+	border-bottom: none;
+	color: #fff;
+}
+
+.nl-form .nl-field-go {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	cursor: pointer;
+	background: rgba(0,0,0,0.1);
+	width: 1.8em;
+	text-align: center;
+	color: transparent;
+}
+
+.nl-field-go:before {
+	content: "\e001";
+	font-size: 75%;
+	color: #fff;
+	width: 100%;
+	line-height: 2.5;
+	display: block;
+}
+
+/* custom placeholder color */
+input::-webkit-input-placeholder {
+	color: rgba(255,255,255,0.8);
+}
+
+input:active::-webkit-input-placeholder ,
+input:focus::-webkit-input-placeholder {
+	color: rgba(255,255,255,0.2);
+}
+
+input::-moz-placeholder {
+	color: rgba(255,255,255,0.8);
+}
+
+input:active::-moz-placeholder,
+input:focus::-moz-placeholder {
+	color: rgba(255,255,255,0.2);
+}
+
+input:-ms-input-placeholder {
+	color: rgba(255,255,255,0.8);
+}
+
+input:active::-ms-input-placeholder ,
+input:focus::-ms-input-placeholder {
+	color: rgba(255,255,255,0.2);
+}
+
+/* example field below text input */
+.nl-ti-text ul li.nl-ti-example {
+	font-size: 40%;
+	font-style: italic;
+	font-weight: 400;
+	padding: 0.4em 1em;
+	color: rgba(0,0,0,0.2);
+	border-top: 1px dashed rgba(255,255,255,0.7);
+}
+
+.nl-ti-text ul li.nl-ti-example em {
+	color: #fff
+}
+
+/* submit button */
+.nl-submit-wrap {
+	margin-top: 0.4em;
+}
+
+.nl-form .nl-submit {
+    text-transform: uppercase;
+    cursor: pointer;
+    position: absolute;
+    background: #76C3BD;
+    color: #fff;
+    padding: 5px;
+    font-size: 100%;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-left: 10px;
+    margin-bottom: 0px;
+    top: 15px;
+}
+
+.nl-submit:before {
+	color: #fff;
+	float: left;
+	padding: 0 0.7em;
+	margin: 0 0.8em 0 0;
+	background: #69B1A9;
+}
+
+.no-touch .nl-form .nl-submit:hover,
+.no-touch .nl-form .nl-submit:active {
+	background: #69B1A9;
+}
+
+.no-touch .nl-form .nl-submit:hover:before {
+	background: #58a199;
+}
+
+/* overlay becomes visible when a field is opened */
+.nl-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	opacity: 0;
+	z-index: 9999;
+	visibility: hidden;
+	-webkit-transition: visibility 0s 0.3s, opacity 0.3s;
+	-moz-transition: visibility 0s 0.3s, opacity 0.3s;
+	transition: visibility 0s 0.3s, opacity 0.3s;
+}
+
+.nl-field.nl-field-open ~ .nl-overlay {
+	opacity: 1;
+	visibility: visible;
+	-webkit-transition-delay: 0s;
+	-moz-transition-delay: 0s;
+	transition-delay: 0s;
+}
+
+@media screen and (max-width: 45em) {
+	.nl-form {
+		font-size: 3em;
+	}
+}
+
+@media screen and (max-width: 25em) {
+	.nl-form {
+		font-size: 2em;
+	}
+}

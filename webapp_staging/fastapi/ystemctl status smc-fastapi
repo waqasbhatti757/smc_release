@@ -1,0 +1,16 @@
+[0;1;32m●[0m smc-django.service - SMC Django Web Application
+   Loaded: loaded (/etc/systemd/system/smc-django.service; enabled; vendor preset: disabled)
+   Active: [0;1;32mactive (running)[0m since Sun 2025-08-31 17:39:41 PKT; 1h 1min ago
+ Main PID: 1584900 (gunicorn)
+   Status: "Gunicorn arbiter booted"
+    Tasks: 5 (limit: 408447)
+   Memory: 168.3M
+   CGroup: /system.slice/smc-django.service
+           ├─1584900 /opt/smc_webapp/webapp/venv/bin/python3 /opt/smc_webapp/webapp/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 --access-logfile /var/log/smc/django_access.log --error-logfile /var/log/smc/django_error.log smc_tracker.wsgi:application
+           ├─1584905 /opt/smc_webapp/webapp/venv/bin/python3 /opt/smc_webapp/webapp/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 --access-logfile /var/log/smc/django_access.log --error-logfile /var/log/smc/django_error.log smc_tracker.wsgi:application
+           ├─1584907 /opt/smc_webapp/webapp/venv/bin/python3 /opt/smc_webapp/webapp/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 --access-logfile /var/log/smc/django_access.log --error-logfile /var/log/smc/django_error.log smc_tracker.wsgi:application
+           ├─1584908 /opt/smc_webapp/webapp/venv/bin/python3 /opt/smc_webapp/webapp/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 --access-logfile /var/log/smc/django_access.log --error-logfile /var/log/smc/django_error.log smc_tracker.wsgi:application
+           └─1584910 /opt/smc_webapp/webapp/venv/bin/python3 /opt/smc_webapp/webapp/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 --access-logfile /var/log/smc/django_access.log --error-logfile /var/log/smc/django_error.log smc_tracker.wsgi:application
+
+Aug 31 17:39:41 smcv2.eoc.gov.pk systemd[1]: Starting SMC Django Web Application...
+Aug 31 17:39:41 smcv2.eoc.gov.pk systemd[1]: Started SMC Django Web Application.

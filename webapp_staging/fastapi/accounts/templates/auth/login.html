@@ -1,0 +1,131 @@
+{% extends "base_log_temp.html" %}
+{% load static %}
+
+{% block title %}Login - SMC Tracker{% endblock %}
+
+{% block content %}
+<div class="relative p-6 sm:p-0 min-h-screen flex flex-col lg:flex-row">
+    <!-- Form -->
+    <div class="flex flex-col flex-1 lg:w-1/2 justify-center items-center">
+        <div class="w-full max-w-md">
+
+            <div class="flex flex-col items-center mb-8">
+                <!-- Logo -->
+                <div class="brand mb-3">
+                    <img src="{% static 'images/eoc-logo.png' %}" alt="eoc" class="h-24">
+                </div>
+
+                <!-- Welcome Text -->
+                <div class="text-center">
+                    <h1 class="text-2xl font-semibold mb-2">Welcome to SMC Tracker</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Sign in by entering information below!
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="relative py-1 text-center">
+                <hr class="border-gray-200 dark:border-gray-800"/>
+                <span class="absolute px-4 text-sm bg-white dark:bg-gray-900 text-gray-400 -translate-y-1/2 top-1/2"></span>
+            </div>
+            {% if messages %}
+            {% for message in messages %}
+            <div class="flex flex-wrap gap-4 sm:items-center sm:justify-center">
+                <!-- Red Badge -->
+                <span class="inline-flex items-center justify-center gap-1 rounded-full bg-red-100 py-0.5 pl-2 pr-2.5 text-sm font-medium text-red-600 dark:bg-red-500/20 dark:text-red-400">
+                <svg class="fill-current" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M5.25012 3C5.25012 2.58579 5.58591 2.25 6.00012 2.25C6.41433 2.25 6.75012 2.58579 6.75012 3V5.25012L9.00034 5.25012C9.41455 5.25012 9.75034 5.58591 9.75034 6.00012C9.75034 6.41433 9.41455 6.75012 9.00034 6.75012H6.75012V9.00034C6.75012 9.41455 6.41433 9.75034 6.00012 9.75034C5.58591 9.75034 5.25012 9.41455 5.25012 9.00034L5.25012 6.75012H3C2.58579 6.75012 2.25 6.41433 2.25 6.00012C2.25 5.58591 2.58579 5.25012 3 5.25012H5.25012V3Z"/>
+                </svg>
+                {{ message }}
+              </span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <form method="POST" class="space-y-5 bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+                {% csrf_token %}
+
+                <!-- Email -->
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Email <span
+                            class="text-red-500">*</span></label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username"
+                           class="w-full h-11 px-4 py-2.5 text-sm border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
+                           required>
+                </div>
+
+                <!-- Password with toggle -->
+                <div class="relative">
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Password <span
+                            class="text-red-500">*</span></label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password"
+                           class="w-full h-11 px-4 pr-10 py-2.5 text-sm border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
+                           required>
+
+                    <span id="togglePassword"
+                          style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                <i class="fa fa-eye text-gray-500"></i>
+              </span>
+                </div>
+
+                <!-- Forgot password -->
+                <div class="flex items-center justify-between">
+                    <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right section -->
+    <div class="hidden lg:flex items-center justify-center w-1/2 bg-green-950 bg-cover bg-center bg-no-repeat p-10"
+         style="background-image: url('{% static 'images/bg.jpg' %}');">
+
+        <div class="flex flex-col items-center text-center bg-green-950/80 p-10 rounded-lg space-y-6">
+
+            <p class="text-white text-2xl font-semibold tracking-wide drop-shadow-md">
+                Still Missed Children Tracker
+            </p>
+            <p class="text-blue-100 text-lg font-medium tracking-wider">
+                NATIONAL EMERGENCY OPERATION CENTER
+            </p>
+            <p class="text-blue-200 text-base font-light italic">
+                Polio Eradication Initiative
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Theme Toggler Button -->
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('password');
+
+        toggleBtn.addEventListener('click', function () {
+            const icon = this.querySelector('i');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+</script>
+{% endblock %}
